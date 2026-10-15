@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-slate-900">แดชบอร์ดติดตามและประเมินห้องปลอดฝุ่น</h1>
-                    <p class="text-xs text-slate-500">ข้อมูลเชื่อมโยงแบบเรียลไทม์จากระบบสำรวจหน้างาน (Google Sheets)</p>
+                    <p class="text-xs text-slate-500">ข้อมูลเชื่อมโยงแบบเรียลไทม์จาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -61,23 +61,23 @@
             <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
                 <div class="absolute right-0 top-0 transform translate-x-8 -translate-y-8 w-64 h-64 bg-indigo-500 rounded-full opacity-10 pointer-events-none"></div>
                 <div class="max-w-3xl relative z-10">
-                    <span class="inline-block bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-indigo-400/30">รายงานเชิงประจักษ์จากข้อมูลสำรวจจริง</span>
-                    <h2 class="text-xl sm:text-2xl font-bold mb-3">สรุปผลการประเมินห้องปลอดฝุ่นโรงพยาบาล</h2>
+                    <span class="inline-block bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-indigo-400/30">รายงานผลสำรวจหน้างานอิงเกณฑ์กรมอนามัย</span>
+                    <h2 class="text-xl sm:text-2xl font-bold mb-3">สรุปสถานะความพร้อมห้องปลอดฝุ่นโรงพยาบาล</h2>
                     <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        วิเคราะห์ข้อมูลดิบจากการสำรวจหน้างานจริง เพื่อการบริหารจัดการทรัพยากร การใช้งบประมาณอย่างคุ้มค่า และการปฏิบัติตามเกณฑ์มาตรฐานกรมอนามัยอย่างโปร่งใส
+                        วิเคราะห์ข้อมูลดิบจาก Google Sheets ตามเกณฑ์มาตรฐาน (ผ่านเกณฑ์ต้องมีค่าฝุ่น &lt; 25 มคก./ลบ.ม. และมีเครื่องฟอกอากาศ) เพื่อการบริหารจัดการทรัพยากรอย่างโปร่งใส
                     </p>
                 </div>
             </div>
 
-            <!-- Dynamic Metrics Grid (Populated from Google Sheet) -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Dynamic Metrics Grid (Populated from Google Sheet without placeholders) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
                             <span>จำนวนห้องสำรวจทั้งหมด</span>
                             <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2 py-0.5 rounded-full">ผลสำรวจ</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-slate-900 mb-1" id="stat-total">0</div>
+                        <div class="text-4xl font-extrabold text-slate-900 mb-1" id="stat-total">-</div>
                         <p class="text-xs text-slate-500">ห้องที่บันทึกข้อมูลในระบบ</p>
                     </div>
                 </div>
@@ -85,33 +85,22 @@
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>ผ่านเกณฑ์สมบูรณ์</span>
-                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">ได้มาตรฐาน</span>
+                            <span>ผ่านเกณฑ์ (ค่าฝุ่น &lt; 25 + มีเครื่องฟอก)</span>
+                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">ผ่านเกณฑ์</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">0</div>
-                        <p class="text-xs text-slate-500">ปิดกั้นมิดชิด + มีอุปกรณ์กรองฝุ่น</p>
+                        <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">-</div>
+                        <p class="text-xs text-slate-500">ผ่านมาตรฐานตามเงื่อนไขกำหนด</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>ต้องปรับปรุง/รออุปกรณ์</span>
-                            <span class="bg-amber-50 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">Transition</span>
-                        </div>
-                        <div class="text-4xl font-extrabold text-amber-600 mb-1" id="stat-pending">0</div>
-                        <p class="text-xs text-slate-500">ขาดเครื่องฟอกหรือยังไม่ซีลขอบ</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>ไม่ผ่านเกณฑ์ (โครงสร้างเปิด)</span>
+                            <span>ไม่ผ่านเกณฑ์ / ต้องปรับปรุง</span>
                             <span class="bg-rose-50 text-rose-700 text-xs font-bold px-2 py-0.5 rounded-full">ต้องทบทวน</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">0</div>
-                        <p class="text-xs text-slate-500">โครงสร้างห้องไม่เอื้ออำนวย</p>
+                        <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">-</div>
+                        <p class="text-xs text-slate-500">ค่าฝุ่นเกิน หรือไม่มีเครื่องฟอกอากาศ</p>
                     </div>
                 </div>
             </div>
@@ -124,17 +113,17 @@
                         <span>สรุปภาพรวมตามกลุ่มงาน</span>
                     </h3>
                     <div id="department-breakdown" class="space-y-3">
-                        <p class="text-sm text-slate-500">กำลังโหลดข้อมูลจาก Google Sheet...</p>
+                        <p class="text-sm text-slate-500">กำลังเชื่อมต่อข้อมูลจาก Google Sheet...</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                         <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        <span>สถานะความพร้อมอุปกรณ์กรองฝุ่น (ข้อ 9 สำคัญที่สุด)</span>
+                        <span>วิเคราะห์สถานะอุปกรณ์กรองฝุ่นและค่าฝุ่น</span>
                     </h3>
                     <div id="equipment-breakdown" class="space-y-3">
-                        <p class="text-sm text-slate-500">กำลังประมวลผลอุปกรณ์ตามเกณฑ์...</p>
+                        <p class="text-sm text-slate-500">กำลังประมวลผลข้อมูล...</p>
                     </div>
                 </div>
             </div>
@@ -163,13 +152,14 @@
                                 <th class="p-3 font-semibold">ค่าฝุ่นภายใน</th>
                                 <th class="p-3 font-semibold">การปิดกั้น</th>
                                 <th class="p-3 font-semibold">ระบบแอร์/เครื่องฟอก</th>
-                                <th class="p-3 font-semibold">จำนวน (แอร์/เครื่องฟอก)</th>
+                                <th class="p-3 font-semibold text-center">จำนวน (แอร์/ฟอก)</th>
+                                <th class="p-3 font-semibold">สถานะประเมิน</th>
                                 <th class="p-3 font-semibold rounded-r-lg">หมายเหตุ</th>
                             </tr>
                         </thead>
                         <tbody id="sheet-data-rows" class="divide-y divide-slate-100 text-slate-600">
                             <tr>
-                                <td colspan="8" class="p-6 text-center text-slate-400">กำลังดึงข้อมูล...</td>
+                                <td colspan="9" class="p-6 text-center text-slate-400">กำลังดึงข้อมูลจาก Google Sheet...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -195,7 +185,7 @@
 
     <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-            ระบบสนับสนุนการตัดสินใจโรงพยาบาล | เชื่อมต่อข้อมูลฟอร์มสำรวจแบบอัตโนมัติ
+            ระบบสนับสนุนการตัดสินใจโรงพยาบาล | เชื่อมโยงข้อมูลฟอร์มสำรวจแบบอัตโนมัติ
         </div>
     </footer>
 
@@ -216,7 +206,7 @@
             { id: 12, text: "ห้ามสูบบุหรี่ภายในอาคารและภายนอกบริเวณห้อง", critical: false },
             { id: 13, text: "มีการจัดพื้นที่สีเขียว buffer zone หรือปลูกต้นไม้เพื่อดักฝุ่น", critical: false },
             { id: 14, text: "ระดับค่าฝุ่นภายในห้อง น้อยกว่า 37.5 ไมโครกรัมต่อลูกบาศก์เมตร หรือ กรณีถ้าฝุ่นในบรรยากาศสูงกว่า 75.0 มคก./ลบ.ม.ขึ้นไป ระดับค่าฝุ่น PM2.5 ในห้องลดลง 50% (I/O = 0.5)", critical: false },
-            { id: 15, text: "ระดับค่าฝุ่นภายในห้อง น้อยกว่า 25 ไมโครกรัมต่อลูกบาศก์เมตร (ตามประกาศค่าเฝ้าระวังคุณภาพอากาศในอาคาร)", critical: false }
+            { id: 15, text: "ระดับค่าฝุ่นภายในห้อง น้อยกว่า 25 ไมโครกรัมต่อลูกบาศก์เมตร (ตามประกาศค่าเฝ้าระวังคุณภาพอากาศในอาคาร)", critical: true }
         ];
 
         function switchTab(tabId) {
@@ -243,30 +233,45 @@
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center">${item.id}</span>
                     <div class="flex-grow">
                         <p class="text-sm font-medium text-slate-800">${item.text}</p>
-                        ${item.critical ? '<span class="inline-block mt-1 text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">ข้อบังคับสำคัญ: หากไม่ผ่าน จะไม่ผ่านเกณฑ์การประเมินทันที</span>' : ''}
+                        ${item.critical ? '<span class="inline-block mt-1 text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">ข้อบังคับสำคัญ: มีผลต่อการผ่านเกณฑ์ประเมิน</span>' : ''}
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        // CSV Parser helper
+        // Robust CSV Parser supporting quotes and commas
         function parseCSV(text) {
             let lines = text.split("\n");
             let result = [];
+            if (lines.length === 0) return result;
+            
+            // Parse headers
             let headers = lines[0].split(",").map(h => h.trim().replace(/^["']|["']$/g, ''));
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
+                
+                let row = [];
+                let inQuotes = false;
+                let currentVal = '';
+                
+                for (let charIdx = 0; charIdx < lines[i].length; charIdx++) {
+                    let char = lines[i][charIdx];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(currentVal.trim().replace(/^["']|["']$/g, ''));
+                        currentVal = '';
+                    } else {
+                        currentVal += char;
+                    }
+                }
+                row.push(currentVal.trim().replace(/^["']|["']$/g, ''));
+
                 let obj = {};
-                let currentline = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(",");
-                
-                // Simple fallback split if regex fails
-                let cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                
                 for (let j = 0; j < headers.length; j++) {
-                    let val = cols[j] ? cols[j].trim().replace(/^["']|["']$/g, '') : '';
-                    obj[headers[j]] = val;
+                    obj[headers[j]] = row[j] !== undefined ? row[j] : '';
                 }
                 result.push(obj);
             }
@@ -278,21 +283,19 @@
             const sheetUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&sheet=การตอบแบบฟอร์ม 1";
             
             try {
-                // Using cors proxy or direct fetch if allowed
                 const response = await fetch(sheetUrl);
                 if (!response.ok) throw new Error("Network response was not ok");
                 const csvText = await response.text();
                 
-                // Parse CSV lines
                 const rows = parseCSV(csvText);
                 processDashboardData(rows);
                 renderTableRows(rows);
             } catch (error) {
-                console.warn("Direct fetch error or CORS restriction, showing empty / instruction state", error);
+                console.warn("Direct fetch error or CORS restriction", error);
                 document.getElementById('sheet-data-rows').innerHTML = `
-                    <tr><td colspan="8" class="p-6 text-center text-amber-600 bg-amber-50 rounded-xl">
+                    <tr><td colspan="9" class="p-6 text-center text-amber-600 bg-amber-50 rounded-xl">
                         ไม่สามารถดึงข้อมูลอัตโนมัติได้เนื่องจากสิทธิ์การแชร์ Google Sheets (CORS Policy)<br>
-                        กรุณาตรวจสอบว่าลิงก์ Google Sheets ตั้งค่าเป็น "ทุกคนที่มีลิงก์สามารถดูได้" หรือทดลองกดรีเฟรชอีกครั้ง
+                        กรุณาตรวจสอบว่าลิงก์ Google Sheets ตั้งค่าการแชร์เป็น "ทุกคนที่มีลิงก์สามารถดูได้" หรือลองกดรีเฟรชอีกครั้ง
                     </td></tr>`;
             }
         }
@@ -300,36 +303,32 @@
         function processDashboardData(rows) {
             let total = rows.length;
             let passed = 0;
-            let pending = 0;
             let failed = 0;
             let deptCount = {};
-            let eqCount = { hasPurifier: 0, noPurifier: 0 };
+            let eqCount = { hasPurifierAndPass: 0, needsImprovement: 0 };
 
             rows.forEach(r => {
                 let dept = r['ชื่อกลุ่มงาน'] || 'ไม่ระบุกลุ่มงาน';
                 deptCount[dept] = (deptCount[dept] || 0) + 1;
 
-                let sealing = r['สภาพการปิดกั้นช่องเปิดของห้อง'] || '';
+                let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
                 let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
 
-                if(equipment.includes('เครื่องฟอกอากาศ')) {
-                    eqCount.hasPurifier++;
-                } else {
-                    eqCount.noPurifier++;
-                }
+                // ตรรกะใหม่: ถ้าค่าฝุ่นในห้องต่ำกว่า 25 และมีเครื่องฟอกอากาศ (ตรวจสอบจากข้อความอุปกรณ์ที่มีคำว่า "เครื่องฟอกอากาศ")
+                let isDustLow = dustLevel.includes('น้อยกว่า 25');
+                let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
 
-                if(sealing.includes('ปิดมิดชิด') && equipment.includes('เครื่องฟอกอากาศ')) {
+                if (isDustLow && hasPurifier) {
                     passed++;
-                } else if(sealing.includes('โครงสร้างเป็นห้องเปิด')) {
-                    failed++;
+                    eqCount.hasPurifierAndPass++;
                 } else {
-                    pending++;
+                    failed++;
+                    eqCount.needsImprovement++;
                 }
             });
 
             document.getElementById('stat-total').innerText = total;
             document.getElementById('stat-passed').innerText = passed;
-            document.getElementById('stat-pending').innerText = pending;
             document.getElementById('stat-failed').innerText = failed;
 
             // Render department breakdown
@@ -351,12 +350,12 @@
             const eqContainer = document.getElementById('equipment-breakdown');
             eqContainer.innerHTML = `
                 <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">มีเครื่องฟอกอากาศ (ผ่านข้อ 9)</span>
-                    <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">${eqCount.hasPurifier} ห้อง</span>
+                    <span class="text-sm font-medium text-slate-700">ผ่านเกณฑ์ (ฝุ่น &lt; 25 และมีเครื่องฟอก)</span>
+                    <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">${eqCount.hasPurifierAndPass} ห้อง</span>
                 </div>
                 <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">ยังไม่มีเครื่องฟอกอากาศ (ต้องจัดหาเพิ่ม)</span>
-                    <span class="text-sm font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">${eqCount.noPurifier} ห้อง</span>
+                    <span class="text-sm font-medium text-slate-700">ต้องปรับปรุง (ฝุ่นเกิน หรือยังไม่มีเครื่องฟอก)</span>
+                    <span class="text-sm font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg">${eqCount.needsImprovement} ห้อง</span>
                 </div>
             `;
         }
@@ -365,20 +364,32 @@
             const tbody = document.getElementById('sheet-data-rows');
             tbody.innerHTML = '';
             if(rows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">ไม่พบข้อมูลในชีต</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">ไม่พบข้อมูลในชีต</td></tr>`;
                 return;
             }
 
             rows.forEach(r => {
+                let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
+                let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
+                
+                let isDustLow = dustLevel.includes('น้อยกว่า 25');
+                let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
+                let isPassed = isDustLow && hasPurifier;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 text-xs text-slate-500">${r['ประทับเวลา'] || '-'}</td>
                         <td class="p-3 font-medium text-slate-800">${r['ชื่อกลุ่มงาน'] || '-'}</td>
                         <td class="p-3 text-slate-700">${r['ชื่อ/รายละเอียดห้อง'] || '-'}</td>
-                        <td class="p-3"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '-'}</span></td>
+                        <td class="p-3"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${dustLevel || '-'}</span></td>
                         <td class="p-3 text-xs">${r['สภาพการปิดกั้นช่องเปิดของห้อง'] || '-'}</td>
-                        <td class="p-3 text-xs">${r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '-'}</td>
+                        <td class="p-3 text-xs">${equipment || '-'}</td>
                         <td class="p-3 text-xs text-center">แอร์: ${r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0'} / ฟอก: ${r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0'}</td>
+                        <td class="p-3 text-xs">
+                            ${isPassed 
+                                ? '<span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">ผ่านเกณฑ์</span>' 
+                                : '<span class="bg-rose-50 text-rose-700 font-semibold px-2.5 py-1 rounded-full border border-rose-200">ไม่ผ่าน</span>'}
+                        </td>
                         <td class="p-3 text-xs text-slate-500">${r['หมายเหตุ'] || '-'}</td>
                     </tr>
                 `;
