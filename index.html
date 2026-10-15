@@ -334,53 +334,58 @@
             });
         }
 
-        // Note: The array order is from BOTTOM floor to TOP floor for the CSS flex-col-reverse layout
+        // โครงสร้างอาคารและชั้น พร้อมคำค้นหา (Keywords) เพื่อจับคู่ข้อมูลที่กรอกมาจากหน้างาน
         const buildingBlueprint = {
-            "ตึกอุบัติเหตุ": {
+            "อุบัติเหตุ": {
                 name: "อุบัติเหตุ 5 ชั้น",
+                matchKeys: ["อุบัติ", "อุบัติเหตุ"],
                 floors: [
-                    { level: "ชั้น 1", desc: "OPD 1" },
-                    { level: "ชั้น 2", desc: "OPD 2 และห้องควบคุมโรค" },
-                    { level: "ชั้น 3", desc: "OPD 3 และห้องอาชีวเวชกรรม" },
-                    { level: "ชั้น 4", desc: "ห้องรอคลอด และห้องคลอด" },
-                    { level: "ชั้น 5", desc: "ห้องประชุม รวงผึ้ง และ CR room" }
+                    { level: "ชั้น 1", desc: "OPD 1", roomKeys: ["opd 1", "opd1", "ชั้น 1", "ชั้น1", "โอพีดี 1"] },
+                    { level: "ชั้น 2", desc: "OPD 2 และห้องควบคุมโรค", roomKeys: ["opd 2", "opd2", "ควบคุมโรค", "ชั้น 2", "ชั้น2", "โอพีดี 2"] },
+                    { level: "ชั้น 3", desc: "OPD 3 และห้องอาชีวเวชกรรม", roomKeys: ["opd 3", "opd3", "อาชีว", "ชั้น 3", "ชั้น3", "โอพีดี 3"] },
+                    { level: "ชั้น 4", desc: "ห้องรอคลอด และห้องคลอด", roomKeys: ["คลอด", "ชั้น 4", "ชั้น4"] },
+                    { level: "ชั้น 5", desc: "ห้องประชุม รวงผึ้ง และ CR room", roomKeys: ["รวงผึ้ง", "cr", "ประชุม", "ชั้น 5", "ชั้น5"] }
                 ]
             },
             "ตึก F": {
                 name: "อาคาร F",
+                matchKeys: [" f", "ตึก f", "อาคาร f", "ตึกf", "อาคารf", "เอฟ"],
                 floors: [
-                    { level: "ชั้น G", desc: "CT/US" },
-                    { level: "ชั้น 1", desc: "หอผู้ป่วยในชาย" },
-                    { level: "ชั้น 2", desc: "หอผู้ป่วยในหญิง" },
-                    { level: "ชั้น 3", desc: "หอผู้ป่วยหลังคลอดสูติฯ" },
-                    { level: "ชั้น 4", desc: "หอผู้ป่วยหนักทารกแรกเกิด NICU" },
-                    { level: "ชั้น 6", desc: "หอผู้ป่วยในพิเศษ" },
-                    { level: "ชั้น 7", desc: "หอผู้ป่วยพิเศษชั้น 7" }
+                    { level: "ชั้น G", desc: "CT/US", roomKeys: ["ct", "us", "ชั้น g", "ชั้นg", "ซีที", "อัลตราซาวด์"] },
+                    { level: "ชั้น 1", desc: "หอผู้ป่วยในชาย", roomKeys: ["ชาย", "ชั้น 1", "ชั้น1"] },
+                    { level: "ชั้น 2", desc: "หอผู้ป่วยในหญิง", roomKeys: ["หญิง", "ชั้น 2", "ชั้น2"] },
+                    { level: "ชั้น 3", desc: "หอผู้ป่วยหลังคลอดสูติฯ", roomKeys: ["สูติ", "หลังคลอด", "ชั้น 3", "ชั้น3"] },
+                    { level: "ชั้น 4", desc: "หอผู้ป่วยหนักทารกแรกเกิด NICU", roomKeys: ["nicu", "ทารก", "แรกเกิด", "ชั้น 4", "ชั้น4"] },
+                    { level: "ชั้น 6", desc: "หอผู้ป่วยในพิเศษ", roomKeys: ["ในพิเศษ", "ชั้น 6", "ชั้น6"] },
+                    { level: "ชั้น 7", desc: "หอผู้ป่วยพิเศษชั้น 7", roomKeys: ["พิเศษชั้น 7", "พิเศษชั้น7", "ชั้น 7", "ชั้น7", "พิเศษ 7"] }
                 ]
             },
             "ตึก MB": {
                 name: "อาคาร MB",
+                matchKeys: ["mb", "เอ็มบี"],
                 floors: [
-                    { level: "ชั้น 1", desc: "โถง MB1 / Wound care" },
-                    { level: "ชั้น 2", desc: "หอผู้ป่วยในชาย (MB2)" },
-                    { level: "ชั้น 3", desc: "แผนกไตเทียม (MB3)" },
-                    { level: "ชั้น 4", desc: "หอผู้ป่วย SP (MB4)" },
-                    { level: "ชั้น 5", desc: "หอผู้ป่วยในหญิง (MB5)" },
-                    { level: "ชั้น 6", desc: "ห้องพิเศษ (MB6)" },
-                    { level: "ชั้น 7", desc: "ห้องพิเศษ (MB7)" },
-                    { level: "ชั้น 8", desc: "ประชุมสุธรรมานุสิฐ" }
+                    { level: "ชั้น 1", desc: "โถง MB1 / Wound care", roomKeys: ["mb1", "mb 1", "wound", "โถง", "ชั้น 1", "ชั้น1"] },
+                    { level: "ชั้น 2", desc: "หอผู้ป่วยในชาย (MB2)", roomKeys: ["mb2", "mb 2", "ชาย", "ชั้น 2", "ชั้น2"] },
+                    { level: "ชั้น 3", desc: "แผนกไตเทียม (MB3)", roomKeys: ["mb3", "mb 3", "ไต", "ชั้น 3", "ชั้น3"] },
+                    { level: "ชั้น 4", desc: "หอผู้ป่วย SP (MB4)", roomKeys: ["mb4", "mb 4", "sp", "ชั้น 4", "ชั้น4"] },
+                    { level: "ชั้น 5", desc: "หอผู้ป่วยในหญิง (MB5)", roomKeys: ["mb5", "mb 5", "หญิง", "ชั้น 5", "ชั้น5"] },
+                    { level: "ชั้น 6", desc: "ห้องพิเศษ (MB6)", roomKeys: ["mb6", "mb 6", "ชั้น 6", "ชั้น6"] },
+                    { level: "ชั้น 7", desc: "ห้องพิเศษ (MB7)", roomKeys: ["mb7", "mb 7", "ชั้น 7", "ชั้น7"] },
+                    { level: "ชั้น 8", desc: "ประชุมสุธรรมานุสิฐ", roomKeys: ["สุธรรมา", "ประชุม", "ชั้น 8", "ชั้น8"] }
                 ]
             },
             "ตึกเก่า": {
                 name: "อาคารเก่า",
+                matchKeys: ["เก่า", "กุมาร"],
                 floors: [
-                    { level: "ชั้น 1", desc: "กุมารเวชกรรม (Pos 1-2, Neg 3-4) / กายภาพบำบัด" }
+                    { level: "ชั้น 1", desc: "กุมารเวชกรรม / กายภาพบำบัด", roomKeys: ["กุมาร", "กายภาพ", "ฟื้นฟู", "ชั้น 1", "ชั้น1", "ห้อง 1", "ห้อง 2", "ห้อง 3", "ห้อง 4", "pos", "neg"] }
                 ]
             },
             "ตึกกายภาพและแพทย์แผนไทย": {
                 name: "อาคารกายภาพฯ",
+                matchKeys: ["กายภาพ", "แผนไทย"],
                 floors: [
-                    { level: "ชั้น 1", desc: "ห้องกายภาพ / แพทย์แผนไทย" }
+                    { level: "ชั้น 1", desc: "ห้องกายภาพ / แพทย์แผนไทย", roomKeys: ["กายภาพ", "แผนไทย", "ชั้น 1", "ชั้น1"] }
                 ]
             }
         };
@@ -552,39 +557,70 @@
             const container = document.getElementById('infographic-container');
             container.innerHTML = '';
 
-            // Map data to buildings mapping
-            for (const [bldgKey, bldgData] of Object.entries(buildingBlueprint)) {
+            // Copy ข้อมูลตึกเพื่อเอาไว้เก็บ array ของห้องที่จะถูกยัดเข้าไปในแต่ละชั้น
+            let bldgDataMap = JSON.parse(JSON.stringify(buildingBlueprint));
+
+            // จัดสรรห้อง (Assign rooms) ให้ตรงตึกและตรงชั้น
+            rows.forEach(r => {
+                let rBldg = (r['อาคาร'] || '').toLowerCase();
+                let rRoom = (r['ชื่อ/รายละเอียดห้อง'] || '').toLowerCase();
                 
-                // Find all rooms in this building
-                let roomsInThisBldg = rows.filter(r => {
-                    let rBldg = (r['อาคาร'] || '').toLowerCase();
-                    // Match by exact or partial name
-                    return rBldg.includes(bldgKey.toLowerCase()) || bldgKey.toLowerCase().includes(rBldg);
-                });
+                // ค้นหาว่าอยู่ตึกไหน
+                let matchedBldgKey = null;
+                for (let key in bldgDataMap) {
+                    if (bldgDataMap[key].matchKeys.some(mk => rBldg.includes(mk))) {
+                        matchedBldgKey = key;
+                        break;
+                    }
+                }
 
-                // Build Floors (Reverse order visually achieved by flex-col-reverse in CSS)
-                let floorsHTML = '';
-                bldgData.floors.forEach(floorDef => {
-                    // Find rooms belonging to this floor
-                    let floorRooms = roomsInThisBldg.filter(r => {
-                        let roomName = (r['ชื่อ/รายละเอียดห้อง'] || '').toLowerCase();
-                        let floorLvl = floorDef.level.toLowerCase();
-                        let descKey = floorDef.desc.toLowerCase().split(' ')[0]; // Basic matching keyword
-                        return roomName.includes(floorLvl) || roomName.includes(descKey);
-                    });
-
-                    // If no explicit match but building has rooms, we just put them in if it's a 1-floor building
-                    if (floorRooms.length === 0 && bldgData.floors.length === 1) {
-                        floorRooms = roomsInThisBldg; 
+                if (matchedBldgKey) {
+                    let bldg = bldgDataMap[matchedBldgKey];
+                    let matchedFloor = null;
+                    
+                    // หาว่าอยู่ชั้นไหน โดยเช็คจาก keyword ของห้อง (แม่นยำสูง)
+                    for (let floor of bldg.floors) {
+                        if (floor.roomKeys.some(rk => rRoom.includes(rk))) {
+                            matchedFloor = floor;
+                            break;
+                        }
+                    }
+                    
+                    // ถ้าไม่เจอจากชื่อห้องเฉพาะ ลองหาจากคำว่า "ชั้น X" ในชื่อห้องโดยตรง
+                    if (!matchedFloor) {
+                        for (let floor of bldg.floors) {
+                            let fLevel = floor.level.toLowerCase().replace(' ', ''); // เช่น "ชั้น1"
+                            if (rRoom.replace(' ', '').includes(fLevel)) {
+                                matchedFloor = floor;
+                                break;
+                            }
+                        }
                     }
 
+                    // ถ้ายังไม่เจออีก ให้จับใส่ชั้นล่างสุดไปก่อน (เพื่อไม่ให้ข้อมูลตกหล่น)
+                    if (!matchedFloor) {
+                        matchedFloor = bldg.floors[0]; 
+                    }
+
+                    if (!matchedFloor.assignedRooms) matchedFloor.assignedRooms = [];
+                    matchedFloor.assignedRooms.push(r);
+                }
+            });
+
+            // สร้าง UI แยกตามตึก
+            for (const [bldgKey, bldgData] of Object.entries(bldgDataMap)) {
+                
+                let floorsHTML = '';
+                // วนลูปสร้างชั้น (อาศัย CSS flex-col-reverse ในการเรียงชั้น 1 ไว้ล่างสุด)
+                bldgData.floors.forEach(floorDef => {
                     let roomBadges = '';
+                    let floorRooms = floorDef.assignedRooms || [];
+
                     if (floorRooms.length > 0) {
                         floorRooms.forEach(room => {
                             let isPass = evaluateRoomPass(room);
                             let statusColor = isPass ? 'bg-emerald-500' : 'bg-rose-500';
                             let briefName = room['ชื่อ/รายละเอียดห้อง'] || 'ห้องทั่วไป';
-                            // Trim name for tight UI
                             if(briefName.length > 25) briefName = briefName.substring(0, 22) + '...';
                             
                             roomBadges += `
@@ -598,7 +634,6 @@
                         roomBadges = `<div class="text-[10px] text-slate-400 italic text-center py-1">ไม่มีข้อมูลประเมิน</div>`;
                     }
 
-                    // Append floor HTML
                     floorsHTML += `
                         <div class="bg-slate-100 border border-slate-200 rounded-md p-2 flex flex-col relative z-10 w-full">
                             <div class="flex justify-between items-baseline mb-2 pb-1 border-b border-slate-200">
@@ -612,7 +647,6 @@
                     `;
                 });
 
-                // Construct full building column
                 let bldgElement = document.createElement('div');
                 bldgElement.className = "flex flex-col items-center w-full";
                 bldgElement.innerHTML = `
