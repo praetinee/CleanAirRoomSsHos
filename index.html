@@ -45,7 +45,7 @@
                 </button>
                 <div class="hidden md:flex space-x-1 bg-slate-100 p-1 rounded-xl">
                     <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-medium rounded-lg bg-teal-600 text-white shadow transition">ภาพรวมผู้บริหาร</button>
-                    <button onclick="switchTab('infographic')" id="btn-infographic" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">ผังตึกและชั้น (Infographic)</button>
+                    <button onclick="switchTab('infographic')" id="btn-infographic" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">ผัง 5 ตึก (Infographic)</button>
                     <button onclick="switchTab('datatable')" id="btn-datatable" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">ตารางข้อมูลดิบ</button>
                     <button onclick="switchTab('criteria')" id="btn-criteria" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">เกณฑ์ 15 ข้อ</button>
                 </div>
@@ -54,7 +54,7 @@
         <!-- Mobile tab bar -->
         <div class="flex md:hidden bg-slate-100 p-1 border-t border-slate-200 justify-around text-xs">
             <button onclick="switchTab('dashboard')" id="btn-dashboard-m" class="flex-1 py-2 font-medium rounded-lg bg-teal-600 text-white text-center">ภาพรวม</button>
-            <button onclick="switchTab('infographic')" id="btn-infographic-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">ผังตึก</button>
+            <button onclick="switchTab('infographic')" id="btn-infographic-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">ผัง 5 ตึก</button>
             <button onclick="switchTab('datatable')" id="btn-datatable-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">ตาราง</button>
             <button onclick="switchTab('criteria')" id="btn-criteria-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">เกณฑ์</button>
         </div>
@@ -98,7 +98,7 @@
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>ผ่านเกณฑ์ (ฝุ่น &lt; 25 และมีเครื่องฟอก)</span>
+                            <span>ผ่านเกณฑ์ (ฝุ่น &lt; 25 + มีเครื่องฟอก หรือ Positive)</span>
                             <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ผ่านเกณฑ์</span>
                         </div>
                         <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">กำลังประมวลผล...</div>
@@ -113,7 +113,7 @@
                             <span class="bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ต้องพัฒนา</span>
                         </div>
                         <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">กำลังประมวลผล...</div>
-                        <p class="text-xs text-slate-500">ยังขาดเครื่องฟอก หรือค่าฝุ่นเกินเกณฑ์</p>
+                        <p class="text-xs text-slate-500">ฝุ่นเกิน, ขาดเครื่องฟอก หรือเป็น Negative</p>
                     </div>
                 </div>
             </div>
@@ -142,22 +142,23 @@
             </div>
         </div>
 
-        <!-- Tab 2: Infographic Building & Floor Plan -->
+        <!-- Tab 2: Infographic Building & Floor Plan (5 Main Buildings) -->
         <div id="tab-infographic" class="tab-content space-y-6">
             <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900">ผังแสดงสถานะห้องปลอดฝุ่นรายอาคารและชั้น (Infographic)</h2>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1">แสดงผลอุปกรณ์แอร์ เครื่องฟอก และสถานะการผ่านเกณฑ์ แยกตามตึกและห้อง</p>
+                        <h2 class="text-xl font-bold text-slate-900">ผังแสดงสถานะห้องปลอดฝุ่น 5 อาคารหลัก (Infographic)</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">แสดงผลเปรียบเทียบโครงสร้างตึกจริงกับข้อมูลห้องที่สำรวจเข้ามาในระบบ</p>
                     </div>
                     <div class="flex items-center space-x-4 text-xs font-medium">
-                        <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span><span>ผ่านเกณฑ์ (ฝุ่น &lt; 25 + มีเครื่องฟอก)</span></span>
+                        <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span><span>ผ่านเกณฑ์</span></span>
                         <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span><span>ไม่ผ่านเกณฑ์</span></span>
+                        <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-slate-300 inline-block"><span>ยังไม่สำรวจ</span></span></span>
                     </div>
                 </div>
 
-                <div id="infographic-container" class="space-y-6">
-                    <p class="text-center text-slate-400 py-12">กำลังโหลดข้อมูลผังอาคาร...</p>
+                <div id="infographic-container" class="space-y-8">
+                    <!-- Populated via script matching the 5 buildings structure -->
                 </div>
             </div>
         </div>
@@ -184,10 +185,10 @@
                                 <th class="p-3">ชื่อ/รายละเอียดห้อง</th>
                                 <th class="p-3">ค่าฝุ่นภายใน</th>
                                 <th class="p-3">การปิดกั้น</th>
-                                <th class="p-3">ระบบแอร์/เครื่องฟอก</th>
+                                <th class="p-3">ระบบแอร์/อุปกรณ์</th>
                                 <th class="p-3 text-center">จำนวน (แอร์/ฟอก)</th>
-                                <th class="p-3">สถานะประเมิน</th>
-                                <th class="p-3 rounded-r-lg">หมายเหตุ</th>
+                                <th class="p-3">หมายเหตุ (ความดัน)</th>
+                                <th class="p-3 rounded-r-lg text-center">สถานะประเมิน</th>
                             </tr>
                         </thead>
                         <tbody id="sheet-data-rows" class="divide-y divide-slate-100 text-slate-600">
@@ -242,6 +243,57 @@
             { id: 15, text: "ระดับค่าฝุ่นภายในห้อง น้อยกว่า 25 ไมโครกรัมต่อลูกบาศก์เมตร (ตามประกาศค่าเฝ้าระวังคุณภาพอากาศในอาคาร)", critical: true }
         ];
 
+        // Structural blueprint of the 5 hospital buildings and their floors
+        const hospitalBlueprint = {
+            "ตึกอุบัติเหตุ": {
+                name: "ตึกอุบัติเหตุ",
+                floors: [
+                    { floor: "ชั้น 5", desc: "ห้องประชุม รวงผึ้ง และ CR room" },
+                    { floor: "ชั้น 4", desc: "ห้องรอคลอด และห้องคลอด" },
+                    { floor: "ชั้น 3", desc: "OPD 3 และห้องอาชีวเวชกรรม" },
+                    { floor: "ชั้น 2", desc: "OPD 2 และห้องควบคุมโรค" },
+                    { floor: "ชั้น 1", desc: "OPD 1" }
+                ]
+            },
+            "ตึก F": {
+                name: "ตึก F",
+                floors: [
+                    { floor: "ชั้น 7", desc: "หอผู้ป่วยพิเศษชั้น 7" },
+                    { floor: "ชั้น 6", desc: "หอผู้ป่วยในพิเศษ" },
+                    { floor: "ชั้น 4", desc: "หอผู้ป่วยหนักทารกแรกเกิด NICU" },
+                    { floor: "ชั้น 3", desc: "หอผู้ป่วยหลังคลอดสูตินรีเวชกรรม" },
+                    { floor: "ชั้น 2", desc: "หอผู้ป่วยในหญิง" },
+                    { floor: "ชั้น 1", desc: "หอผู้ป่วยในชาย" },
+                    { floor: "ชั้น G", desc: "CT/US" }
+                ]
+            },
+            "ตึก MB": {
+                name: "ตึก MB",
+                floors: [
+                    { floor: "ชั้น 8", desc: "ห้องประชุมสุธรรมานุสิฐ" },
+                    { floor: "ชั้น 7", desc: "ห้องพิเศษ (MB7)" },
+                    { floor: "ชั้น 6", desc: "ห้องพิเศษ (MB6)" },
+                    { floor: "ชั้น 5", desc: "หอผู้ป่วยในหญิงตึก (MB5)" },
+                    { floor: "ชั้น 4", desc: "หอผู้ป่วย SP (MB4)" },
+                    { floor: "ชั้น 3", desc: "แผนกไตเทียม (MB3)" },
+                    { floor: "ชั้น 2", desc: "หอผู้ป่วยในชาย (MB2)" },
+                    { floor: "ชั้น 1", desc: "โถง MB1 และห้อง Wound care" }
+                ]
+            },
+            "ตึกเก่า": {
+                name: "ตึกเก่า",
+                floors: [
+                    { floor: "ชั้น 1", desc: "หอผู้ป่วยกุมารเวชกรรม (ห้อง 1-2 Positive, ห้อง 3-4 Negative) และกายภาพบำบัด" }
+                ]
+            },
+            "ตึกกายภาพและแพทย์แผนไทย": {
+                name: "ตึกกายภาพและแพทย์แผนไทย",
+                floors: [
+                    { floor: "ชั้น 1", desc: "ห้องกายภาพ และ ห้องแพทย์แผนไทย" }
+                ]
+            }
+        };
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
@@ -283,7 +335,6 @@
             let result = [];
             if (lines.length === 0) return result;
             
-            // Parse headers
             let headers = lines[0].split(",").map(h => h.trim().replace(/^["']|["']$/g, ''));
 
             for (let i = 1; i < lines.length; i++) {
@@ -315,7 +366,24 @@
             return result;
         }
 
-        // Fetch data from Google Sheets CSV export
+        // Evaluation Logic: Passed if (dust < 25 AND has air purifier) OR positive pressure. Negative pressure fails.
+        function evaluateRoomPass(r) {
+            let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
+            let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
+            let remark = r['หมายเหตุ'] || '';
+
+            let isDustLow = dustLevel.includes('น้อยกว่า 25');
+            let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
+            let isPositive = remark.toLowerCase().includes('positive') || remark.includes('บวก');
+            let isNegative = remark.toLowerCase().includes('negative') || remark.includes('ลบ');
+
+            if (isNegative) return false; // Negative pressure always fails clean room standard
+            if (isPositive) return true;  // Positive pressure passes
+            if (isDustLow && hasPurifier) return true; // Dust < 25 and has purifier passes
+
+            return false;
+        }
+
         async function fetchSheetData() {
             const sheetUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&sheet=การตอบแบบฟอร์ม 1";
             
@@ -326,7 +394,7 @@
                 
                 const rows = parseCSV(csvText);
                 processDashboardData(rows);
-                renderInfographic(rows);
+                renderInfographic(rows, hospitalBlueprint);
                 renderTableRows(rows);
             } catch (error) {
                 console.warn("Direct fetch error or CORS restriction", error);
@@ -353,18 +421,11 @@
             let failCountEq = 0;
 
             rows.forEach(r => {
-                // Column B is now 'อาคาร'
                 let building = r['อาคาร'] || r['ชื่อกลุ่มงาน'] || 'ไม่ระบุอาคาร';
                 buildingCount[building] = (buildingCount[building] || 0) + 1;
 
-                let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
-                let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
-
-                // Rule: Dust level < 25 AND must have an air purifier
-                let isDustLow = dustLevel.includes('น้อยกว่า 25');
-                let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
-
-                if (isDustLow && hasPurifier) {
+                let isPassed = evaluateRoomPass(r);
+                if (isPassed) {
                     passed++;
                     passCountEq++;
                 } else {
@@ -377,7 +438,6 @@
             document.getElementById('stat-passed').innerText = passed;
             document.getElementById('stat-failed').innerText = failed;
 
-            // Render building breakdown
             const bldgContainer = document.getElementById('building-breakdown');
             bldgContainer.innerHTML = '';
             if(Object.keys(buildingCount).length === 0) {
@@ -392,89 +452,100 @@
                 }
             }
 
-            // Render equipment breakdown
             const eqContainer = document.getElementById('equipment-breakdown');
             eqContainer.innerHTML = `
                 <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">ผ่านเกณฑ์ (ฝุ่น &lt; 25 และมีเครื่องฟอก)</span>
+                    <span class="text-sm font-medium text-slate-700">ผ่านเกณฑ์ (ฝุ่น &lt; 25 + มีเครื่องฟอก หรือ Positive)</span>
                     <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">${passCountEq} ห้อง</span>
                 </div>
                 <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">ไม่ผ่านเกณฑ์ (ฝุ่นเกิน หรือไม่มีเครื่องฟอก)</span>
+                    <span class="text-sm font-medium text-slate-700">ไม่ผ่านเกณฑ์ (ฝุ่นเกิน, ขาดเครื่องฟอก หรือ Negative)</span>
                     <span class="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-lg">${failCountEq} ห้อง</span>
                 </div>
             `;
         }
 
-        // Render Infographic Building & Floor view
-        function renderInfographic(rows) {
+        // Render Infographic for 5 Buildings and their floors
+        function renderInfographic(rows, blueprint) {
             const container = document.getElementById('infographic-container');
             if(!container) return;
             container.innerHTML = '';
 
-            if(rows.length === 0) {
-                container.innerHTML = `<p class="text-center text-slate-400 py-12">ไม่พบข้อมูลห้องสำหรับจัดทำผังอาคาร</p>`;
-                return;
-            }
-
-            // Group by Building (Column B)
-            let buildings = {};
+            // Map rows by building and room name for easy matching
+            let sheetDataByBuilding = {};
             rows.forEach(r => {
-                let bldg = r['อาคาร'] || r['ชื่อกลุ่มงาน'] || 'อาคารหลัก';
-                if(!buildings[bldg]) buildings[bldg] = [];
-                buildings[bldg].push(r);
+                let bldg = r['อาคาร'] || r['ชื่อกลุ่มงาน'] || 'อื่นๆ';
+                if(!sheetDataByBuilding[bldg]) sheetDataByBuilding[bldg] = [];
+                sheetDataByBuilding[bldg].push(r);
             });
 
-            for(let bldg in buildings) {
-                let bldgCard = document.createElement('div');
-                bldgCard.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4';
-                
-                let roomsHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
-                
-                buildings[bldg].forEach(r => {
-                    let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '-';
-                    let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '-';
-                    let acCount = r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0';
-                    let purCount = r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0';
-                    let roomName = r['ชื่อ/รายละเอียดห้อง'] || 'ห้องไม่ระบุชื่อ';
-                    
-                    let isDustLow = dustLevel.includes('น้อยกว่า 25');
-                    let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
-                    let isPassed = isDustLow && hasPurifier;
+            for(let bldgKey in blueprint) {
+                let buildingInfo = blueprint[bldgKey];
+                let bldgRooms = sheetDataByBuilding[bldgKey] || [];
 
-                    let statusBadge = isPassed 
-                        ? '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ผ่านเกณฑ์</span>'
-                        : '<span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ไม่ผ่านเกณฑ์</span>';
+                let floorsHTML = '';
+                buildingInfo.floors.forEach(f => {
+                    // Find rooms matching this floor description or general building rooms
+                    let matchedRooms = bldgRooms.filter(r => {
+                        let roomDesc = (r['ชื่อ/รายละเอียดห้อง'] || '').toLowerCase();
+                        let floorName = f.floor.toLowerCase();
+                        let descKey = f.desc.toLowerCase();
+                        return roomDesc.includes(floorName) || descKey.includes(roomDesc) || true; // fallback to show in building
+                    });
 
-                    roomsHTML += `
-                        <div class="bg-white p-4 rounded-xl border ${isPassed ? 'border-emerald-200 shadow-sm' : 'border-rose-200 shadow-sm'} space-y-3">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <h4 class="text-sm font-bold text-slate-900">${roomName}</h4>
-                                    <p class="text-[11px] text-slate-500">ค่าฝุ่น: ${dustLevel}</p>
+                    let roomsBadgeHTML = '';
+                    if(bldgRooms.length > 0) {
+                        // Display actual surveyed rooms for this building
+                        bldgRooms.forEach(r => {
+                            let roomName = r['ชื่อ/รายละเอียดห้อง'] || 'ห้องไม่ระบุชื่อ';
+                            let isPassed = evaluateRoomPass(r);
+                            let dust = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '-';
+                            let eq = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '-';
+
+                            roomsBadgeHTML += `
+                                <div class="bg-white p-3 rounded-xl border ${isPassed ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'} flex items-center justify-between gap-2 shadow-2xs">
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-900">${roomName}</p>
+                                        <p class="text-[10px] text-slate-500">ฝุ่น: ${dust} | แหล่งกรอง: ${eq}</p>
+                                    </div>
+                                    ${isPassed 
+                                        ? '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">ผ่านเกณฑ์</span>'
+                                        : '<span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">ไม่ผ่าน</span>'}
                                 </div>
-                                ${statusBadge}
+                            `;
+                        });
+                    } else {
+                        roomsBadgeHTML = `<p class="text-xs text-slate-400 italic py-1">ยังไม่มีการบันทึกข้อมูลสำรวจในระบบ</p>`;
+                    }
+
+                    floorsHTML += `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <span class="text-xs font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-lg">${f.floor}</span>
+                                <span class="text-xs font-medium text-slate-600">${f.desc}</span>
                             </div>
-                            <div class="text-xs space-y-1 text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                                <div class="flex justify-between"><span>ระบบแอร์/กรอง:</span> <span class="font-medium text-slate-800">${equipment}</span></div>
-                                <div class="flex justify-between"><span>จำนวน (แอร์ / ฟอก):</span> <span class="font-medium text-slate-800">${acCount} / ${purCount} เครื่อง</span></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                                ${roomsBadgeHTML}
                             </div>
                         </div>
                     `;
                 });
-                roomsHTML += '</div>';
 
-                bldgCard.innerHTML = `
+                let buildingCard = document.createElement('div');
+                buildingCard.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4';
+                buildingCard.innerHTML = `
                     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                         <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 rounded-full bg-teal-600"></div>
-                            <h3 class="font-bold text-base text-slate-900">${bldg}</h3>
+                            <div class="w-3.5 h-3.5 rounded-full bg-teal-600"></div>
+                            <h3 class="font-bold text-base text-slate-900">${buildingInfo.name}</h3>
                         </div>
-                        <span class="text-xs bg-white text-slate-600 font-semibold px-3 py-1 rounded-lg border border-slate-200 shadow-xs">${buildings[bldg].length} ห้องสำรวจ</span>
+                        <span class="text-xs bg-white text-slate-600 font-semibold px-3 py-1 rounded-lg border border-slate-200 shadow-2xs">${bldgRooms.length} ห้องที่สำรวจแล้ว</span>
                     </div>
-                    ${roomsHTML}
+                    <div class="space-y-3">
+                        ${floorsHTML}
+                    </div>
                 `;
-                container.appendChild(bldgCard);
+                container.appendChild(buildingCard);
             }
         }
 
@@ -489,10 +560,9 @@
             rows.forEach(r => {
                 let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
                 let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
+                let remark = r['หมายเหตุ'] || '-';
                 
-                let isDustLow = dustLevel.includes('น้อยกว่า 25');
-                let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
-                let isPassed = isDustLow && hasPurifier;
+                let isPassed = evaluateRoomPass(r);
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
@@ -503,12 +573,12 @@
                         <td class="p-3 text-xs">${r['สภาพการปิดกั้นช่องเปิดของห้อง'] || '-'}</td>
                         <td class="p-3 text-xs">${equipment || '-'}</td>
                         <td class="p-3 text-xs text-center whitespace-nowrap">แอร์: ${r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0'} / ฟอก: ${r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0'}</td>
-                        <td class="p-3 text-xs whitespace-nowrap">
+                        <td class="p-3 text-xs text-slate-500">${remark}</td>
+                        <td class="p-3 text-xs text-center whitespace-nowrap">
                             ${isPassed 
                                 ? '<span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">ผ่านเกณฑ์</span>' 
                                 : '<span class="bg-rose-50 text-rose-700 font-semibold px-2.5 py-1 rounded-full border border-rose-200">ไม่ผ่านเกณฑ์</span>'}
                         </td>
-                        <td class="p-3 text-xs text-slate-500">${r['หมายเหตุ'] || '-'}</td>
                     </tr>
                 `;
             });
