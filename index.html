@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบวิเคราะห์ข้อมูลห้องปลอดฝุ่น โรงพยาบาล (เชื่อมโยงข้อมูลจริง)</title>
+    <title>ระบบวิเคราะห์และประเมินห้องปลอดฝุ่น โรงพยาบาล</title>
     <!-- Google Fonts Inter & Prompt -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -27,69 +27,80 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-35 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900">แดชบอร์ดติดตามและประเมินห้องปลอดฝุ่น</h1>
-                    <p class="text-xs text-slate-500">ข้อมูลเชื่อมโยงแบบเรียลไทม์จาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900">แดชบอร์ดติดตามและประเมินห้องปลอดฝุ่น โรงพยาบาล</h1>
+                    <p class="text-xs text-slate-500">ข้อมูลเชื่อมโยงเรียลไทม์จาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <button onclick="fetchSheetData()" class="px-3 py-2 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>รีเฟรชข้อมูล</span>
+                    <span>รีเฟรช</span>
                 </button>
-                <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl">
+                <div class="hidden md:flex space-x-1 bg-slate-100 p-1 rounded-xl">
                     <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white shadow transition">สรุปภาพรวม</button>
                     <button onclick="switchTab('datatable')" id="btn-datatable" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">รายการสำรวจทั้งหมด</button>
                     <button onclick="switchTab('criteria')" id="btn-criteria" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">เกณฑ์ 15 ข้อ</button>
                 </div>
             </div>
         </div>
+        <!-- Mobile tab bar -->
+        <div class="flex md:hidden bg-slate-100 p-1 border-t border-slate-200 justify-around">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard-m" class="flex-1 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white text-center">สรุปภาพรวม</button>
+            <button onclick="switchTab('datatable')" id="btn-datatable-m" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center">รายการทั้งหมด</button>
+            <button onclick="switchTab('criteria')" id="btn-criteria-m" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center">เกณฑ์ 15 ข้อ</button>
+        </div>
     </header>
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-        <!-- Tab 1: Executive Dashboard with Dynamic Data -->
+        <!-- Tab 1: Executive Dashboard with Live Google Sheet Data -->
         <div id="tab-dashboard" class="tab-content active space-y-8">
             
-            <!-- Executive Banner -->
-            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute right-0 top-0 transform translate-x-8 -translate-y-8 w-64 h-64 bg-indigo-500 rounded-full opacity-10 pointer-events-none"></div>
-                <div class="max-w-3xl relative z-10">
-                    <span class="inline-block bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-indigo-400/30">รายงานผลสำรวจหน้างานอิงเกณฑ์กรมอนามัย</span>
-                    <h2 class="text-xl sm:text-2xl font-bold mb-3">สรุปสถานะความพร้อมห้องปลอดฝุ่นโรงพยาบาล</h2>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        วิเคราะห์ข้อมูลดิบจาก Google Sheets ตามเกณฑ์มาตรฐาน (ผ่านเกณฑ์ต้องมีค่าฝุ่น &lt; 25 มคก./ลบ.ม. และมีเครื่องฟอกอากาศ) เพื่อการบริหารจัดการทรัพยากรอย่างโปร่งใส
+            <!-- Scope & Objective Framing Banner (Crucial for leadership context) -->
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-6 sm:p-7 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute right-0 top-0 transform translate-x-8 -translate-y-8 w-64 h-64 bg-white opacity-5 rounded-full pointer-events-none"></div>
+                <div class="max-w-4xl relative z-10 space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-500/30 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30">ขอบเขตการพิจารณาตามเจตนารมณ์กรมอนามัย</span>
+                        <span class="text-xs text-blue-200">| เพื่อป้องกันความเข้าใจคลาดเคลื่อนในการประเมินพื้นที่</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold">หลักเกณฑ์การคัดเลือกพื้นที่จัดตั้งห้องปลอดฝุ่นของโรงพยาบาล</h2>
+                    <p class="text-slate-200 text-xs sm:text-sm leading-relaxed">
+                        การประเมินห้องปลอดฝุ่นจะพิจารณาเฉพาะ <strong>"จุดบริการที่ประชาชนหรือผู้เข้ารับบริการใช้เวลาพักคอย และเป็นพื้นที่สาธารณะที่สามารถเข้ามาพักหลบฝุ่นพิษได้จริง"</strong> (เช่น แผนกผู้ป่วยนอก ห้องรอตรวจ ห้องอุบัติเหตุฉุกเฉิน หอผู้ป่วยเฉพาะกลุ่มเปราะบาง) 
+                        <br><br>
+                        <em>จะไม่นำพื้นที่สำนักงานภายใน (Back Office / Admin) ที่ไม่อนุญาตให้บุคคลภายนอกเข้า มานับรวมในการประเมินห้องปลอดฝุ่น</em> เนื่องจากวัตถุประสงค์หลักของกระทรวงสาธารณสุขคือการปกป้องสุขภาพประชาชนกลุ่มเสี่ยงในพื้นที่รับบริการ
                     </p>
                 </div>
             </div>
 
-            <!-- Dynamic Metrics Grid (Populated from Google Sheet without placeholders) -->
+            <!-- Executive Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>จำนวนห้องสำรวจทั้งหมด</span>
-                            <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2 py-0.5 rounded-full">ผลสำรวจ</span>
+                            <span>จำนวนห้องที่สำรวจทั้งหมด</span>
+                            <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded-full">บันทึกจริง</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-slate-900 mb-1" id="stat-total">-</div>
-                        <p class="text-xs text-slate-500">ห้องที่บันทึกข้อมูลในระบบ</p>
+                        <div class="text-4xl font-extrabold text-slate-900 mb-1" id="stat-total">กำลังโหลด...</div>
+                        <p class="text-xs text-slate-500">ข้อมูลอัปเดตจาก Google Sheets</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
-                            <span>ผ่านเกณฑ์ (ค่าฝุ่น &lt; 25 + มีเครื่องฟอก)</span>
-                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">ผ่านเกณฑ์</span>
+                            <span>ผ่านเกณฑ์ (ฝุ่น &lt; 25 และมีเครื่องฟอก)</span>
+                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ผ่านเกณฑ์</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">-</div>
-                        <p class="text-xs text-slate-500">ผ่านมาตรฐานตามเงื่อนไขกำหนด</p>
+                        <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">กำลังประมวลผล...</div>
+                        <p class="text-xs text-slate-500">ค่าฝุ่นต่ำกว่า 25 และมีเครื่องฟอกอากาศพร้อม</p>
                     </div>
                 </div>
 
@@ -97,33 +108,33 @@
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
                             <span>ไม่ผ่านเกณฑ์ / ต้องปรับปรุง</span>
-                            <span class="bg-rose-50 text-rose-700 text-xs font-bold px-2 py-0.5 rounded-full">ต้องทบทวน</span>
+                            <span class="bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ต้องพัฒนา</span>
                         </div>
-                        <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">-</div>
-                        <p class="text-xs text-slate-500">ค่าฝุ่นเกิน หรือไม่มีเครื่องฟอกอากาศ</p>
+                        <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">กำลังประมวลผล...</div>
+                        <p class="text-xs text-slate-500">ยังไม่ครบตามเงื่อนไข (ขาดเครื่องฟอก หรือฝุ่นเกิน)</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Analysis breakdown cards -->
+            <!-- Analysis breakdown grids -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        <span>สรุปภาพรวมตามกลุ่มงาน</span>
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span>สรุปจำนวนห้องตามกลุ่มงาน</span>
                     </h3>
                     <div id="department-breakdown" class="space-y-3">
-                        <p class="text-sm text-slate-500">กำลังเชื่อมต่อข้อมูลจาก Google Sheet...</p>
+                        <p class="text-sm text-slate-400">กำลังดึงข้อมูล...</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        <span>วิเคราะห์สถานะอุปกรณ์กรองฝุ่นและค่าฝุ่น</span>
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>สรุปสถานะความพร้อมอุปกรณ์และค่าฝุ่น</span>
                     </h3>
                     <div id="equipment-breakdown" class="space-y-3">
-                        <p class="text-sm text-slate-500">กำลังประมวลผลข้อมูล...</p>
+                        <p class="text-sm text-slate-400">กำลังประมวลผลข้อมูลจากแบบฟอร์ม...</p>
                     </div>
                 </div>
             </div>
@@ -135,26 +146,26 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900">รายการสำรวจห้องปลอดฝุ่นรายห้อง</h2>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อมูลดึงตรงจาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อมูลตรงจาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
                     </div>
                     <div class="text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-                        แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/edit?resourcekey=&gid=492889691#gid=492889691" target="_blank" class="text-indigo-600 underline font-medium">เปิดลิงก์ต้นทาง</a>
+                        แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/edit?resourcekey=&gid=492889691#gid=492889691" target="_blank" class="text-indigo-600 underline font-medium">เปิดลิงก์ Google Sheets ต้นทาง</a>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-xs uppercase tracking-wider">
-                                <th class="p-3 font-semibold rounded-l-lg">ประทับเวลา</th>
-                                <th class="p-3 font-semibold">กลุ่มงาน</th>
-                                <th class="p-3 font-semibold">ชื่อ/รายละเอียดห้อง</th>
-                                <th class="p-3 font-semibold">ค่าฝุ่นภายใน</th>
-                                <th class="p-3 font-semibold">การปิดกั้น</th>
-                                <th class="p-3 font-semibold">ระบบแอร์/เครื่องฟอก</th>
-                                <th class="p-3 font-semibold text-center">จำนวน (แอร์/ฟอก)</th>
-                                <th class="p-3 font-semibold">สถานะประเมิน</th>
-                                <th class="p-3 font-semibold rounded-r-lg">หมายเหตุ</th>
+                            <tr class="bg-slate-100 text-slate-700 uppercase tracking-wider text-[11px]">
+                                <th class="p-3 rounded-l-lg">ประทับเวลา</th>
+                                <th class="p-3">กลุ่มงาน</th>
+                                <th class="p-3">ชื่อ/รายละเอียดห้อง</th>
+                                <th class="p-3">ค่าฝุ่นภายใน</th>
+                                <th class="p-3">การปิดกั้น</th>
+                                <th class="p-3">ระบบแอร์/เครื่องฟอก</th>
+                                <th class="p-3 text-center">จำนวน (แอร์/ฟอก)</th>
+                                <th class="p-3">สถานะประเมิน</th>
+                                <th class="p-3 rounded-r-lg">หมายเหตุ</th>
                             </tr>
                         </thead>
                         <tbody id="sheet-data-rows" class="divide-y divide-slate-100 text-slate-600">
@@ -172,7 +183,7 @@
             <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">เกณฑ์ประเมินห้องปลอดฝุ่น 15 ข้อ (กรมอนามัย)</h2>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อกำหนดอย่างเป็นทางการสำหรับใช้อ้างอิงในการประชุม</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อกำหนดอย่างเป็นทางการสำหรับอ้างอิงในการประชุมเชิงนโยบาย</p>
                 </div>
 
                 <div class="space-y-3" id="official-criteria-list">
@@ -185,12 +196,12 @@
 
     <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-            ระบบสนับสนุนการตัดสินใจโรงพยาบาล | เชื่อมโยงข้อมูลฟอร์มสำรวจแบบอัตโนมัติ
+            ระบบสนับสนุนการตัดสินใจโรงพยาบาล | รายงานข้อมูลห้องปลอดฝุ่นอิงเกณฑ์มาตรฐานกรมอนามัย
         </div>
     </footer>
 
     <script>
-        // Official 15 criteria array
+        // Official 15 criteria array including critical rule #9 and dust level checks #14, #15
         const officialCriteria = [
             { id: 1, text: "มีการกำหนดนโยบาย และแนวทางการจัดทำห้องปลอดฝุ่นหรือการลดฝุ่นละอองในอาคาร หรือการจัด 5 ส. ในอาคาร", critical: false },
             { id: 2, text: "มีการมอบหมายเจ้าหน้าที่หรือบุคลากรผ่านการอบรม/มีความรู้ในการดูแลห้องปลอดฝุ่นอย่างชัดเจน", critical: false },
@@ -200,7 +211,7 @@
             { id: 6, text: "ภายในห้องไม่มีแหล่งก่อมลพิษ เช่น จุดเทียน จุดธูป สูบบุหรี่", critical: false },
             { id: 7, text: "มีการปิดประตู หน้าต่าง หรือใช้วัสดุปิดช่องหรือรูต่าง ๆ เพื่อไม่ให้อากาศภายนอกเข้าภายในอาคาร", critical: false },
             { id: 8, text: "มีมาตรการที่ลดการก่อให้เกิดฝุ่นโดยรอบ เช่น กำหนดจุดจอดรถหรือการรับ-ส่งให้ห่างจากห้องปลอดฝุ่น งดกิจกรรมการเผาหรือกิจกรรมที่ก่อให้เกิดฝุ่น ดูแลถนนไม่ให้เกิดฝุ่นละออง เป็นต้น", critical: false },
-            { id: 9, text: "มีการใช้อุปกรณ์เพื่อลดปริมาณฝุ่นภายในห้อง เช่น เครื่องฟอกอากาศ หรือเครื่องเติมอากาศและกรองอากาศ โดยเลือกขนาดที่เหมาะสมกับขนาดห้อง และมีการควบคุมอุณหภูมิห้อง ให้มีค่าไม่เกิน 30 องศาเซลเซียส", critical: true },
+            { id: 9, text: "มีการใช้อุปกรณ์เพื่อลดปริมาณฝุ่นภายในห้อง เช่น เครื่องฟอกอากาศ หรือเครื่องเติมอากาศและกรองอากาศ โดยเลือกขนาดที่เหมาะสมกับขนาดห้อง และมีการควบคุมอุณหภูมิห้อง ให้มีค่าไม่เกิน 30 องศาเซลเซียส (ไม่ใช่ = ไม่ผ่านเกณฑ์)", critical: true },
             { id: 10, text: "มีการระบายอากาศในช่วงเวลาที่มีฝุ่นน้อยเพื่อลดการสะสมของ CO2 เช่น เปิดพัดลมหรือเครื่องปรับอากาศเพื่อหมุนเวียนอากาศภายในห้องหรือเปิดหน้าต่างและประตู เพื่อให้มีการระบายอากาศในห้อง", critical: false },
             { id: 11, text: "ทำความสะอาดพื้น วัสดุ เฟอร์นิเจอร์ ชั้นวาง ฯลฯ เป็นประจำทุกวัน", critical: false },
             { id: 12, text: "ห้ามสูบบุหรี่ภายในอาคารและภายนอกบริเวณห้อง", critical: false },
@@ -214,17 +225,21 @@
             document.getElementById('tab-' + tabId).classList.add('active');
 
             ['dashboard', 'datatable', 'criteria'].forEach(id => {
-                const btn = document.getElementById('btn-' + id);
+                const btnDesktop = document.getElementById('btn-' + id);
+                const btnMobile = document.getElementById('btn-' + id + '-m');
                 if(id === tabId) {
-                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white shadow transition';
+                    if(btnDesktop) btnDesktop.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white shadow transition';
+                    if(btnMobile) btnMobile.className = 'flex-1 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white text-center shadow';
                 } else {
-                    btn.className = 'px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition';
+                    if(btnDesktop) btnDesktop.className = 'px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition';
+                    if(btnMobile) btnMobile.className = 'flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center';
                 }
             });
         }
 
         function renderOfficialCriteria() {
             const container = document.getElementById('official-criteria-list');
+            if(!container) return;
             container.innerHTML = '';
             officialCriteria.forEach(item => {
                 const div = document.createElement('div');
@@ -233,7 +248,7 @@
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center">${item.id}</span>
                     <div class="flex-grow">
                         <p class="text-sm font-medium text-slate-800">${item.text}</p>
-                        ${item.critical ? '<span class="inline-block mt-1 text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">ข้อบังคับสำคัญ: มีผลต่อการผ่านเกณฑ์ประเมิน</span>' : ''}
+                        ${item.critical ? '<span class="inline-block mt-1 text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded border border-rose-100">ข้อบังคับสำคัญ: หากไม่ปฏิบัติหรือไม่ผ่าน จะส่งผลให้ตกเกณฑ์ประเมิน</span>' : ''}
                     </div>
                 `;
                 container.appendChild(div);
@@ -292,10 +307,15 @@
                 renderTableRows(rows);
             } catch (error) {
                 console.warn("Direct fetch error or CORS restriction", error);
+                document.getElementById('stat-total').innerText = '0';
+                document.getElementById('stat-passed').innerText = '0';
+                document.getElementById('stat-failed').innerText = '0';
+                document.getElementById('department-breakdown').innerHTML = `<p class="text-sm text-amber-600">ไม่สามารถเชื่อมต่อ Google Sheets ได้อัตโนมัติ (CORS Policy)</p>`;
+                document.getElementById('equipment-breakdown').innerHTML = `<p class="text-sm text-amber-600">กรุณาตรวจสอบการแชร์ลิงก์ Google Sheets ให้เป็น "ทุกคนที่มีลิงก์สามารถดูได้"</p>`;
                 document.getElementById('sheet-data-rows').innerHTML = `
                     <tr><td colspan="9" class="p-6 text-center text-amber-600 bg-amber-50 rounded-xl">
                         ไม่สามารถดึงข้อมูลอัตโนมัติได้เนื่องจากสิทธิ์การแชร์ Google Sheets (CORS Policy)<br>
-                        กรุณาตรวจสอบว่าลิงก์ Google Sheets ตั้งค่าการแชร์เป็น "ทุกคนที่มีลิงก์สามารถดูได้" หรือลองกดรีเฟรชอีกครั้ง
+                        โปรดตรวจสอบสิทธิ์การแชร์ลิงก์ หรือกดปุ่มรีเฟรชอีกครั้ง
                     </td></tr>`;
             }
         }
@@ -305,7 +325,8 @@
             let passed = 0;
             let failed = 0;
             let deptCount = {};
-            let eqCount = { hasPurifierAndPass: 0, needsImprovement: 0 };
+            let passCountEq = 0;
+            let failCountEq = 0;
 
             rows.forEach(r => {
                 let dept = r['ชื่อกลุ่มงาน'] || 'ไม่ระบุกลุ่มงาน';
@@ -314,16 +335,16 @@
                 let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
                 let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
 
-                // ตรรกะใหม่: ถ้าค่าฝุ่นในห้องต่ำกว่า 25 และมีเครื่องฟอกอากาศ (ตรวจสอบจากข้อความอุปกรณ์ที่มีคำว่า "เครื่องฟอกอากาศ")
+                // ตรรกะใหม่: ถ้าค่าฝุ่นในห้องมันต่ำกว่า 25 และมีเครื่องฟอก (ตรวจสอบจากข้อความอุปกรณ์ที่มีคำว่า "เครื่องฟอกอากาศ")
                 let isDustLow = dustLevel.includes('น้อยกว่า 25');
                 let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
 
                 if (isDustLow && hasPurifier) {
                     passed++;
-                    eqCount.hasPurifierAndPass++;
+                    passCountEq++;
                 } else {
                     failed++;
-                    eqCount.needsImprovement++;
+                    failCountEq++;
                 }
             });
 
@@ -339,9 +360,9 @@
             } else {
                 for(let dept in deptCount) {
                     deptContainer.innerHTML += `
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
                             <span class="text-sm font-medium text-slate-700">${dept}</span>
-                            <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">${deptCount[dept]} ห้อง</span>
+                            <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">${deptCount[dept]} ห้อง</span>
                         </div>`;
                 }
             }
@@ -349,13 +370,13 @@
             // Render equipment breakdown
             const eqContainer = document.getElementById('equipment-breakdown');
             eqContainer.innerHTML = `
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
                     <span class="text-sm font-medium text-slate-700">ผ่านเกณฑ์ (ฝุ่น &lt; 25 และมีเครื่องฟอก)</span>
-                    <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">${eqCount.hasPurifierAndPass} ห้อง</span>
+                    <span class="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">${passCountEq} ห้อง</span>
                 </div>
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="text-sm font-medium text-slate-700">ต้องปรับปรุง (ฝุ่นเกิน หรือยังไม่มีเครื่องฟอก)</span>
-                    <span class="text-sm font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg">${eqCount.needsImprovement} ห้อง</span>
+                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                    <span class="text-sm font-medium text-slate-700">ไม่ผ่านเกณฑ์ (ฝุ่นเกิน หรือไม่มีเครื่องฟอก)</span>
+                    <span class="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-lg">${failCountEq} ห้อง</span>
                 </div>
             `;
         }
@@ -364,7 +385,7 @@
             const tbody = document.getElementById('sheet-data-rows');
             tbody.innerHTML = '';
             if(rows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">ไม่พบข้อมูลในชีต</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">ไม่พบข้อมูลใน Google Sheet</td></tr>`;
                 return;
             }
 
@@ -378,17 +399,17 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 text-xs text-slate-500">${r['ประทับเวลา'] || '-'}</td>
+                        <td class="p-3 text-xs text-slate-500 whitespace-nowrap">${r['ประทับเวลา'] || '-'}</td>
                         <td class="p-3 font-medium text-slate-800">${r['ชื่อกลุ่มงาน'] || '-'}</td>
                         <td class="p-3 text-slate-700">${r['ชื่อ/รายละเอียดห้อง'] || '-'}</td>
-                        <td class="p-3"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${dustLevel || '-'}</span></td>
+                        <td class="p-3"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs">${dustLevel || '-'}</span></td>
                         <td class="p-3 text-xs">${r['สภาพการปิดกั้นช่องเปิดของห้อง'] || '-'}</td>
                         <td class="p-3 text-xs">${equipment || '-'}</td>
-                        <td class="p-3 text-xs text-center">แอร์: ${r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0'} / ฟอก: ${r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0'}</td>
-                        <td class="p-3 text-xs">
+                        <td class="p-3 text-xs text-center whitespace-nowrap">แอร์: ${r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0'} / ฟอก: ${r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0'}</td>
+                        <td class="p-3 text-xs whitespace-nowrap">
                             ${isPassed 
                                 ? '<span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">ผ่านเกณฑ์</span>' 
-                                : '<span class="bg-rose-50 text-rose-700 font-semibold px-2.5 py-1 rounded-full border border-rose-200">ไม่ผ่าน</span>'}
+                                : '<span class="bg-rose-50 text-rose-700 font-semibold px-2.5 py-1 rounded-full border border-rose-200">ไม่ผ่านเกณฑ์</span>'}
                         </td>
                         <td class="p-3 text-xs text-slate-500">${r['หมายเหตุ'] || '-'}</td>
                     </tr>
