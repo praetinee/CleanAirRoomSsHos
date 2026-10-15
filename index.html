@@ -25,13 +25,13 @@
         .tab-content.active { display: block; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-35 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <div class="bg-teal-600 p-2.5 rounded-xl text-white shadow-md shadow-teal-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-bold text-slate-900">แดชบอร์ดติดตามและประเมินห้องปลอดฝุ่น โรงพยาบาล</h1>
@@ -41,55 +41,57 @@
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <button onclick="fetchSheetData()" class="px-3 py-2 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>รีเฟรช</span>
+                    <span>รีเฟรชข้อมูล</span>
                 </button>
                 <div class="hidden md:flex space-x-1 bg-slate-100 p-1 rounded-xl">
-                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white shadow transition">สรุปภาพรวม</button>
-                    <button onclick="switchTab('datatable')" id="btn-datatable" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">รายการสำรวจทั้งหมด</button>
+                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-medium rounded-lg bg-teal-600 text-white shadow transition">ภาพรวมผู้บริหาร</button>
+                    <button onclick="switchTab('infographic')" id="btn-infographic" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">ผังตึกและชั้น (Infographic)</button>
+                    <button onclick="switchTab('datatable')" id="btn-datatable" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">ตารางข้อมูลดิบ</button>
                     <button onclick="switchTab('criteria')" id="btn-criteria" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition">เกณฑ์ 15 ข้อ</button>
                 </div>
             </div>
         </div>
         <!-- Mobile tab bar -->
-        <div class="flex md:hidden bg-slate-100 p-1 border-t border-slate-200 justify-around">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard-m" class="flex-1 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white text-center">สรุปภาพรวม</button>
-            <button onclick="switchTab('datatable')" id="btn-datatable-m" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center">รายการทั้งหมด</button>
-            <button onclick="switchTab('criteria')" id="btn-criteria-m" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center">เกณฑ์ 15 ข้อ</button>
+        <div class="flex md:hidden bg-slate-100 p-1 border-t border-slate-200 justify-around text-xs">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard-m" class="flex-1 py-2 font-medium rounded-lg bg-teal-600 text-white text-center">ภาพรวม</button>
+            <button onclick="switchTab('infographic')" id="btn-infographic-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">ผังตึก</button>
+            <button onclick="switchTab('datatable')" id="btn-datatable-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">ตาราง</button>
+            <button onclick="switchTab('criteria')" id="btn-criteria-m" class="flex-1 py-2 font-medium rounded-lg text-slate-600 text-center">เกณฑ์</button>
         </div>
     </header>
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
+        <!-- Scope & Objective Framing Banner (Crucial for leadership context) -->
+        <div class="bg-gradient-to-r from-teal-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 transform translate-x-8 -translate-y-8 w-64 h-64 bg-white opacity-5 rounded-full pointer-events-none"></div>
+            <div class="max-w-4xl relative z-10 space-y-3">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-teal-500/30 text-teal-200 text-xs font-semibold px-3 py-1 rounded-full border border-teal-400/30">ขอบเขตการพิจารณาตามเจตนารมณ์กรมอนามัย</span>
+                    <span class="text-xs text-slate-300">| เพื่อป้องกันความเข้าใจคลาดเคลื่อนในการประเมินพื้นที่</span>
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold">หลักเกณฑ์การคัดเลือกพื้นที่จัดตั้งห้องปลอดฝุ่นของโรงพยาบาล</h2>
+                <p class="text-slate-200 text-xs sm:text-sm leading-relaxed">
+                    ห้องที่จะเข้าเกณฑ์พิจารณาคือ <strong>"จุดบริการที่ประชาชนหรือผู้เข้ารับบริการใช้เวลาพักคอย หรือเป็นจุดที่สามารถเข้ามาพักหนีฝุ่นได้จริง"</strong> 
+                    <br>
+                    <strong>จะไม่นับรวมสำนักงานภายใน (Back Office / Admin)</strong> ที่ไม่อนุญาตให้บุคคลภายนอกเข้า เนื่องจากวัตถุประสงค์หลักของห้องปลอดฝุ่นคือการปกป้องสุขภาพประชาชนกลุ่มเสี่ยงที่มารับบริการในพื้นที่สาธารณะของโรงพยาบาล
+                </p>
+            </div>
+        </div>
+
         <!-- Tab 1: Executive Dashboard with Live Google Sheet Data -->
         <div id="tab-dashboard" class="tab-content active space-y-8">
             
-            <!-- Scope & Objective Framing Banner (Crucial for leadership context) -->
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-6 sm:p-7 text-white shadow-lg relative overflow-hidden">
-                <div class="absolute right-0 top-0 transform translate-x-8 -translate-y-8 w-64 h-64 bg-white opacity-5 rounded-full pointer-events-none"></div>
-                <div class="max-w-4xl relative z-10 space-y-3">
-                    <div class="flex items-center space-x-2">
-                        <span class="bg-blue-500/30 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30">ขอบเขตการพิจารณาตามเจตนารมณ์กรมอนามัย</span>
-                        <span class="text-xs text-blue-200">| เพื่อป้องกันความเข้าใจคลาดเคลื่อนในการประเมินพื้นที่</span>
-                    </div>
-                    <h2 class="text-lg sm:text-xl font-bold">หลักเกณฑ์การคัดเลือกพื้นที่จัดตั้งห้องปลอดฝุ่นของโรงพยาบาล</h2>
-                    <p class="text-slate-200 text-xs sm:text-sm leading-relaxed">
-                        การประเมินห้องปลอดฝุ่นจะพิจารณาเฉพาะ <strong>"จุดบริการที่ประชาชนหรือผู้เข้ารับบริการใช้เวลาพักคอย และเป็นพื้นที่สาธารณะที่สามารถเข้ามาพักหลบฝุ่นพิษได้จริง"</strong> (เช่น แผนกผู้ป่วยนอก ห้องรอตรวจ ห้องอุบัติเหตุฉุกเฉิน หอผู้ป่วยเฉพาะกลุ่มเปราะบาง) 
-                        <br><br>
-                        <em>จะไม่นำพื้นที่สำนักงานภายใน (Back Office / Admin) ที่ไม่อนุญาตให้บุคคลภายนอกเข้า มานับรวมในการประเมินห้องปลอดฝุ่น</em> เนื่องจากวัตถุประสงค์หลักของกระทรวงสาธารณสุขคือการปกป้องสุขภาพประชาชนกลุ่มเสี่ยงในพื้นที่รับบริการ
-                    </p>
-                </div>
-            </div>
-
             <!-- Executive Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between text-slate-500 text-sm font-medium mb-2">
                             <span>จำนวนห้องที่สำรวจทั้งหมด</span>
-                            <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded-full">บันทึกจริง</span>
+                            <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ผลสำรวจจริง</span>
                         </div>
                         <div class="text-4xl font-extrabold text-slate-900 mb-1" id="stat-total">กำลังโหลด...</div>
-                        <p class="text-xs text-slate-500">ข้อมูลอัปเดตจาก Google Sheets</p>
+                        <p class="text-xs text-slate-500">ข้อมูลอัปเดตเรียลไทม์จาก Google Sheets</p>
                     </div>
                 </div>
 
@@ -100,7 +102,7 @@
                             <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ผ่านเกณฑ์</span>
                         </div>
                         <div class="text-4xl font-extrabold text-emerald-600 mb-1" id="stat-passed">กำลังประมวลผล...</div>
-                        <p class="text-xs text-slate-500">ค่าฝุ่นต่ำกว่า 25 และมีเครื่องฟอกอากาศพร้อม</p>
+                        <p class="text-xs text-slate-500">ผ่านเกณฑ์ตามประกาศกรมอนามัย</p>
                     </div>
                 </div>
 
@@ -111,7 +113,7 @@
                             <span class="bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-0.5 rounded-full">ต้องพัฒนา</span>
                         </div>
                         <div class="text-4xl font-extrabold text-rose-600 mb-1" id="stat-failed">กำลังประมวลผล...</div>
-                        <p class="text-xs text-slate-500">ยังไม่ครบตามเงื่อนไข (ขาดเครื่องฟอก หรือฝุ่นเกิน)</p>
+                        <p class="text-xs text-slate-500">ยังขาดเครื่องฟอก หรือค่าฝุ่นเกินเกณฑ์</p>
                     </div>
                 </div>
             </div>
@@ -120,10 +122,10 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        <span>สรุปจำนวนห้องตามกลุ่มงาน</span>
+                        <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span>สรุปจำนวนห้องตามอาคาร (Column B)</span>
                     </h3>
-                    <div id="department-breakdown" class="space-y-3">
+                    <div id="building-breakdown" class="space-y-3">
                         <p class="text-sm text-slate-400">กำลังดึงข้อมูล...</p>
                     </div>
                 </div>
@@ -140,16 +142,36 @@
             </div>
         </div>
 
-        <!-- Tab 2: Datatable View from Google Sheet -->
+        <!-- Tab 2: Infographic Building & Floor Plan -->
+        <div id="tab-infographic" class="tab-content space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">ผังแสดงสถานะห้องปลอดฝุ่นรายอาคารและชั้น (Infographic)</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">แสดงผลอุปกรณ์แอร์ เครื่องฟอก และสถานะการผ่านเกณฑ์ แยกตามตึกและห้อง</p>
+                    </div>
+                    <div class="flex items-center space-x-4 text-xs font-medium">
+                        <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span><span>ผ่านเกณฑ์ (ฝุ่น &lt; 25 + มีเครื่องฟอก)</span></span>
+                        <span class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span><span>ไม่ผ่านเกณฑ์</span></span>
+                    </div>
+                </div>
+
+                <div id="infographic-container" class="space-y-6">
+                    <p class="text-center text-slate-400 py-12">กำลังโหลดข้อมูลผังอาคาร...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Datatable View from Google Sheet -->
         <div id="tab-datatable" class="tab-content space-y-6">
             <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900">รายการสำรวจห้องปลอดฝุ่นรายห้อง</h2>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อมูลตรงจาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
+                        <h2 class="text-xl font-bold text-slate-900">รายการสำรวจห้องปลอดฝุ่นรายห้อง (ข้อมูลดิบ)</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">ดึงข้อมูลตรงจาก Google Sheets (ชีต: การตอบแบบฟอร์ม 1)</p>
                     </div>
                     <div class="text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-                        แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/edit?resourcekey=&gid=492889691#gid=492889691" target="_blank" class="text-indigo-600 underline font-medium">เปิดลิงก์ Google Sheets ต้นทาง</a>
+                        แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/edit?resourcekey=&gid=492889691#gid=492889691" target="_blank" class="text-teal-600 underline font-medium">เปิด Google Sheets ต้นทาง</a>
                     </div>
                 </div>
 
@@ -158,7 +180,7 @@
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 uppercase tracking-wider text-[11px]">
                                 <th class="p-3 rounded-l-lg">ประทับเวลา</th>
-                                <th class="p-3">กลุ่มงาน</th>
+                                <th class="p-3">อาคาร</th>
                                 <th class="p-3">ชื่อ/รายละเอียดห้อง</th>
                                 <th class="p-3">ค่าฝุ่นภายใน</th>
                                 <th class="p-3">การปิดกั้น</th>
@@ -178,12 +200,12 @@
             </div>
         </div>
 
-        <!-- Tab 3: Official 15 Criteria Reference -->
+        <!-- Tab 4: Official 15 Criteria Reference -->
         <div id="tab-criteria" class="tab-content space-y-6">
             <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">เกณฑ์ประเมินห้องปลอดฝุ่น 15 ข้อ (กรมอนามัย)</h2>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อกำหนดอย่างเป็นทางการสำหรับอ้างอิงในการประชุมเชิงนโยบาย</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">ข้อกำหนดอย่างเป็นทางการสำหรับอ้างอิงในการประชุมผู้บริหาร</p>
                 </div>
 
                 <div class="space-y-3" id="official-criteria-list">
@@ -224,15 +246,15 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
 
-            ['dashboard', 'datatable', 'criteria'].forEach(id => {
+            ['dashboard', 'infographic', 'datatable', 'criteria'].forEach(id => {
                 const btnDesktop = document.getElementById('btn-' + id);
                 const btnMobile = document.getElementById('btn-' + id + '-m');
                 if(id === tabId) {
-                    if(btnDesktop) btnDesktop.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white shadow transition';
-                    if(btnMobile) btnMobile.className = 'flex-1 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white text-center shadow';
+                    if(btnDesktop) btnDesktop.className = 'px-4 py-2 text-sm font-medium rounded-lg bg-teal-600 text-white shadow transition';
+                    if(btnMobile) btnMobile.className = 'flex-1 py-2 font-medium rounded-lg bg-teal-600 text-white text-center shadow';
                 } else {
                     if(btnDesktop) btnDesktop.className = 'px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-white transition';
-                    if(btnMobile) btnMobile.className = 'flex-1 py-2 text-xs font-medium rounded-lg text-slate-600 text-center';
+                    if(btnMobile) btnMobile.className = 'flex-1 py-2 font-medium rounded-lg text-slate-600 text-center';
                 }
             });
         }
@@ -304,14 +326,16 @@
                 
                 const rows = parseCSV(csvText);
                 processDashboardData(rows);
+                renderInfographic(rows);
                 renderTableRows(rows);
             } catch (error) {
                 console.warn("Direct fetch error or CORS restriction", error);
                 document.getElementById('stat-total').innerText = '0';
                 document.getElementById('stat-passed').innerText = '0';
                 document.getElementById('stat-failed').innerText = '0';
-                document.getElementById('department-breakdown').innerHTML = `<p class="text-sm text-amber-600">ไม่สามารถเชื่อมต่อ Google Sheets ได้อัตโนมัติ (CORS Policy)</p>`;
+                document.getElementById('building-breakdown').innerHTML = `<p class="text-sm text-amber-600">ไม่สามารถเชื่อมต่อ Google Sheets ได้อัตโนมัติ (CORS Policy)</p>`;
                 document.getElementById('equipment-breakdown').innerHTML = `<p class="text-sm text-amber-600">กรุณาตรวจสอบการแชร์ลิงก์ Google Sheets ให้เป็น "ทุกคนที่มีลิงก์สามารถดูได้"</p>`;
+                document.getElementById('infographic-container').innerHTML = `<p class="text-center text-amber-600 py-12">ไม่สามารถดึงข้อมูลผังอาคารได้อัตโนมัติ กรุณาตรวจสอบการแชร์ลิงก์ Google Sheets</p>`;
                 document.getElementById('sheet-data-rows').innerHTML = `
                     <tr><td colspan="9" class="p-6 text-center text-amber-600 bg-amber-50 rounded-xl">
                         ไม่สามารถดึงข้อมูลอัตโนมัติได้เนื่องจากสิทธิ์การแชร์ Google Sheets (CORS Policy)<br>
@@ -324,18 +348,19 @@
             let total = rows.length;
             let passed = 0;
             let failed = 0;
-            let deptCount = {};
+            let buildingCount = {};
             let passCountEq = 0;
             let failCountEq = 0;
 
             rows.forEach(r => {
-                let dept = r['ชื่อกลุ่มงาน'] || 'ไม่ระบุกลุ่มงาน';
-                deptCount[dept] = (deptCount[dept] || 0) + 1;
+                // Column B is now 'อาคาร'
+                let building = r['อาคาร'] || r['ชื่อกลุ่มงาน'] || 'ไม่ระบุอาคาร';
+                buildingCount[building] = (buildingCount[building] || 0) + 1;
 
                 let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '';
                 let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '';
 
-                // ตรรกะใหม่: ถ้าค่าฝุ่นในห้องมันต่ำกว่า 25 และมีเครื่องฟอก (ตรวจสอบจากข้อความอุปกรณ์ที่มีคำว่า "เครื่องฟอกอากาศ")
+                // Rule: Dust level < 25 AND must have an air purifier
                 let isDustLow = dustLevel.includes('น้อยกว่า 25');
                 let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
 
@@ -352,17 +377,17 @@
             document.getElementById('stat-passed').innerText = passed;
             document.getElementById('stat-failed').innerText = failed;
 
-            // Render department breakdown
-            const deptContainer = document.getElementById('department-breakdown');
-            deptContainer.innerHTML = '';
-            if(Object.keys(deptCount).length === 0) {
-                deptContainer.innerHTML = `<p class="text-sm text-slate-400">ยังไม่มีข้อมูลในชีต</p>`;
+            // Render building breakdown
+            const bldgContainer = document.getElementById('building-breakdown');
+            bldgContainer.innerHTML = '';
+            if(Object.keys(buildingCount).length === 0) {
+                bldgContainer.innerHTML = `<p class="text-sm text-slate-400">ยังไม่มีข้อมูลในชีต</p>`;
             } else {
-                for(let dept in deptCount) {
-                    deptContainer.innerHTML += `
+                for(let bldg in buildingCount) {
+                    bldgContainer.innerHTML += `
                         <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-sm font-medium text-slate-700">${dept}</span>
-                            <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">${deptCount[dept]} ห้อง</span>
+                            <span class="text-sm font-medium text-slate-700">${bldg}</span>
+                            <span class="text-sm font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-lg">${buildingCount[bldg]} ห้อง</span>
                         </div>`;
                 }
             }
@@ -379,6 +404,78 @@
                     <span class="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-lg">${failCountEq} ห้อง</span>
                 </div>
             `;
+        }
+
+        // Render Infographic Building & Floor view
+        function renderInfographic(rows) {
+            const container = document.getElementById('infographic-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(rows.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-12">ไม่พบข้อมูลห้องสำหรับจัดทำผังอาคาร</p>`;
+                return;
+            }
+
+            // Group by Building (Column B)
+            let buildings = {};
+            rows.forEach(r => {
+                let bldg = r['อาคาร'] || r['ชื่อกลุ่มงาน'] || 'อาคารหลัก';
+                if(!buildings[bldg]) buildings[bldg] = [];
+                buildings[bldg].push(r);
+            });
+
+            for(let bldg in buildings) {
+                let bldgCard = document.createElement('div');
+                bldgCard.className = 'bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4';
+                
+                let roomsHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                
+                buildings[bldg].forEach(r => {
+                    let dustLevel = r['ค่าฝุ่นภายในห้อง ณ วันที่สำรวจ'] || '-';
+                    let equipment = r['ระบบปรับอากาศและอุปกรณ์กรองฝุ่น'] || '-';
+                    let acCount = r['จำนวนเครื่องปรับอากาศต่อห้อง'] || '0';
+                    let purCount = r['จำนวนเครื่องฟอกอากาศต่อห้อง'] || '0';
+                    let roomName = r['ชื่อ/รายละเอียดห้อง'] || 'ห้องไม่ระบุชื่อ';
+                    
+                    let isDustLow = dustLevel.includes('น้อยกว่า 25');
+                    let hasPurifier = equipment.includes('เครื่องฟอกอากาศ');
+                    let isPassed = isDustLow && hasPurifier;
+
+                    let statusBadge = isPassed 
+                        ? '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ผ่านเกณฑ์</span>'
+                        : '<span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ไม่ผ่านเกณฑ์</span>';
+
+                    roomsHTML += `
+                        <div class="bg-white p-4 rounded-xl border ${isPassed ? 'border-emerald-200 shadow-sm' : 'border-rose-200 shadow-sm'} space-y-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">${roomName}</h4>
+                                    <p class="text-[11px] text-slate-500">ค่าฝุ่น: ${dustLevel}</p>
+                                </div>
+                                ${statusBadge}
+                            </div>
+                            <div class="text-xs space-y-1 text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                <div class="flex justify-between"><span>ระบบแอร์/กรอง:</span> <span class="font-medium text-slate-800">${equipment}</span></div>
+                                <div class="flex justify-between"><span>จำนวน (แอร์ / ฟอก):</span> <span class="font-medium text-slate-800">${acCount} / ${purCount} เครื่อง</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                roomsHTML += '</div>';
+
+                bldgCard.innerHTML = `
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 rounded-full bg-teal-600"></div>
+                            <h3 class="font-bold text-base text-slate-900">${bldg}</h3>
+                        </div>
+                        <span class="text-xs bg-white text-slate-600 font-semibold px-3 py-1 rounded-lg border border-slate-200 shadow-xs">${buildings[bldg].length} ห้องสำรวจ</span>
+                    </div>
+                    ${roomsHTML}
+                `;
+                container.appendChild(bldgCard);
+            }
         }
 
         function renderTableRows(rows) {
@@ -400,7 +497,7 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 text-xs text-slate-500 whitespace-nowrap">${r['ประทับเวลา'] || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${r['ชื่อกลุ่มงาน'] || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${r['อาคาร'] || r['ชื่อกลุ่มงาน'] || '-'}</td>
                         <td class="p-3 text-slate-700">${r['ชื่อ/รายละเอียดห้อง'] || '-'}</td>
                         <td class="p-3"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs">${dustLevel || '-'}</span></td>
                         <td class="p-3 text-xs">${r['สภาพการปิดกั้นช่องเปิดของห้อง'] || '-'}</td>
