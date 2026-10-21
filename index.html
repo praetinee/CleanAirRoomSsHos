@@ -131,17 +131,8 @@
 </div>
 
 <script>
-    // URL ข้อมูล
     const googleSheetCsvUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&gid=492889691"; 
     const pm25CsvUrl = "https://docs.google.com/spreadsheets/d/1-Une9oA0-ln6ApbhwaXFNpkniAvX7g1K9pNR800MJwQ/export?format=csv&gid=0";
-
-    // ⭐️ เพิ่มรายชื่อห้องที่เคยผ่านประเมินปี 2568 ไว้ตรงนี้ (พิมพ์ชื่อให้ตรงกับไฟล์ CSV)
-    const history2568Rooms = [
-        "ห้องอาชีวเวชกรรม", 
-        "หอผู้ป่วยหนักทารกแรกเกิด NICU",
-        "ห้องควบคุมโรค"
-        // เพิ่มชื่อห้องอื่นๆ ตรงนี้
-    ];
 
     function loadPM25Data() {
         Papa.parse(pm25CsvUrl, {
@@ -185,7 +176,7 @@
     function showPM25Error() {
         const widgetEl = document.getElementById("pm25-widget");
         widgetEl.className = "pm25-widget pm25-error";
-        document.getElementById("pm25-display").innerText = "เชื่อมต่อข้อมูลไม่ได้";
+        document.getElementById("pm25-display").innerText = "ข้อมูลไม่พร้อมใช้งาน";
         document.getElementById("pm25-time").innerText = "โปรดตรวจสอบการแชร์ไฟล์";
     }
 
@@ -223,6 +214,12 @@
             const airconSystem = airconSysKey ? row[airconSysKey] : "-";
             const purifierCountStr = row["จำนวนเครื่องฟอกอากาศต่อห้อง"] || "0";
             const note = row["หมายเหตุ"] || "";
+            
+            // อ่านคอลัมน์ "ลงทะเบียนห้องปลอดฝุ่นในปี"
+            const historyKey = Object.keys(row).find(k => k.includes("ลงทะเบียนห้องปลอดฝุ่นในปี"));
+            const historyValue = historyKey ? (row[historyKey] || "").toString().trim() : "";
+            // เช็คว่ากรอกเป็น 68 หรือ 2568
+            const hasHistory68 = historyValue.includes("68") || historyValue.includes("2568");
             
             const fullRowText = Object.values(row).join(" ").toLowerCase();
 
@@ -262,15 +259,13 @@
             if (isReady) { readyAreas++; readyRooms += subRoomCount; } 
             else { pendingAreas++; pendingRooms += subRoomCount; }
 
-            // ส่วนจัดการแสดงผลชื่อห้องและประวัติปี 68
             let displayRoomName = roomName;
             
-            // เช็คประวัติปี 68
-            if (history2568Rooms.includes(roomName)) {
+            // แปะป้ายถ้าเคยลงทะเบียนปี 68
+            if (hasHistory68) {
                 displayRoomName += ` <span class="history-badge">★ เคยลงทะเบียนปี 68</span>`;
             }
 
-            // แจ้งจำนวนห้องย่อย
             if (subRoomCount > 1) {
                 displayRoomName += `<br><span class="sub-room-badge">พื้นที่นี้มี ${subRoomCount} ห้องย่อย</span>`;
             }
