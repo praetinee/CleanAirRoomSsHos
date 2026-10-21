@@ -212,19 +212,12 @@
 </div>
 
 <script>
-    // คำแนะนำ: นำลิงก์ CSV ที่ได้จากการกด "Publish to web" ใน Google Sheets มาวางตรงนี้
-    const googleSheetCsvUrl = "วาง_LINK_CSV_ที่นี่"; 
+    // URL ที่ปรับให้ดึงเป็น CSV อัตโนมัติ
+    const googleSheetCsvUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&gid=492889691"; 
     
     let globalData = [];
 
-    // ฟังก์ชันดึงข้อมูลและประมวลผล
     function loadData() {
-        // หากยังไม่ได้ใส่ Link ให้แสดงข้อมูลตัวอย่างก่อน
-        if(googleSheetCsvUrl === "วาง_LINK_CSV_ที่นี่") {
-            document.getElementById("table-body").innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">กรุณาใส่ลิงก์ CSV จาก Google Sheets ในโค้ดสคริปต์</td></tr>';
-            return;
-        }
-
         Papa.parse(googleSheetCsvUrl, {
             download: true,
             header: true,
@@ -234,7 +227,7 @@
                 renderDashboard(globalData);
             },
             error: function(err) {
-                document.getElementById("table-body").innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">เกิดข้อผิดพลาดในการดึงข้อมูล กรุณาตรวจสอบลิงก์</td></tr>';
+                document.getElementById("table-body").innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบว่าไฟล์ Google Sheets นี้ได้ตั้งค่า "แชร์" เป็น "ทุกคนที่มีลิงก์ (Anyone with the link)" แล้ว</td></tr>';
             }
         });
     }
@@ -246,7 +239,7 @@
         let tableHTML = "";
 
         data.forEach(row => {
-            // ป้องกันปัญหาชื่อคอลัมน์มีช่องว่างด้านหลัง
+            // ดึงค่ามาจากคอลัมน์ (ปรับให้ครอบคลุมกรณีมีช่องว่างที่ชื่อคอลัมน์)
             const building = row["อาคาร"] || "-";
             const roomName = row["ชื่อ/รายละเอียดห้อง"] || "-";
             const airconSysKey = Object.keys(row).find(k => k.includes("ระบบปรับอากาศและอุปกรณ์กรองฝุ่น"));
@@ -254,7 +247,7 @@
             const airconCount = row["จำนวนเครื่องปรับอากาศต่อห้อง"] || "-";
             const purifierCountStr = row["จำนวนเครื่องฟอกอากาศต่อห้อง"] || "0";
             
-            // แปลงค่าเครื่องฟอกเป็นตัวเลข หากไม่มีให้ถือเป็น 0
+            // เช็คสถานะ
             const purifierCount = parseInt(purifierCountStr) || 0;
             const isReady = purifierCount > 0;
             const statusClass = isReady ? "ready" : "pending";
@@ -278,22 +271,19 @@
             `;
         });
 
-        // อัปเดตตัวเลขสรุป
+        // อัปเดตตัวเลข
         document.getElementById("kpi-total").innerText = total + " ห้อง";
         document.getElementById("kpi-ready").innerText = readyCount + " ห้อง";
         document.getElementById("kpi-pending").innerText = pendingCount + " ห้อง";
         
-        // อัปเดตตาราง
+        // แสดงในตาราง
         document.getElementById("table-body").innerHTML = tableHTML;
     }
 
-    // ฟังก์ชันกรองตาราง
     function filterTable(status, buttonElement) {
-        // อัปเดตปุ่มที่ถูกเลือก
         document.querySelectorAll('.filter-group button').forEach(btn => btn.classList.remove('active'));
         buttonElement.classList.add('active');
 
-        // กรองแถวในตาราง
         const rows = document.querySelectorAll('.data-row');
         rows.forEach(row => {
             if (status === 'all' || row.getAttribute('data-status') === status) {
@@ -304,7 +294,6 @@
         });
     }
 
-    // เริ่มทำงานเมื่อเปิดหน้าเว็บ
     window.onload = loadData;
 </script>
 
