@@ -29,6 +29,39 @@
         .header-title h1 { font-size: 1.5rem; color: var(--primary-color); margin: 0 0 5px 0; }
         .header-title p.subtitle { color: var(--secondary-color); margin: 0; font-size: 0.95rem; }
 
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+        
+        /* ปุ่ม Workspace */
+        .btn-workspace {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            color: #334155;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-workspace:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-workspace svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
         .pm25-widget { background: var(--card-bg); padding: 12px 20px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: right; border-left: 4px solid #cbd5e1; transition: all 0.3s; min-width: 200px; }
         .pm25-level-1 { border-left-color: #3b82f6; } .pm25-level-1 .pm25-val { color: #3b82f6; }
         .pm25-level-2 { border-left-color: #22c55e; } .pm25-level-2 .pm25-val { color: #22c55e; }
@@ -74,10 +107,21 @@
             <p class="subtitle">ระบบสารสนเทศเพื่อการเตรียมความพร้อมและบันทึกข้อมูลกรมอนามัย (รวมการคำนวณห้องย่อย)</p>
         </div>
         
-        <div id="pm25-widget" class="pm25-widget">
-            <div style="font-size: 0.85rem; color: var(--secondary-color);">ค่าฝุ่น PM2.5 สันทราย (Real-time)</div>
-            <div style="font-size: 1.8rem; font-weight: 600; line-height: 1.2;" class="pm25-val" id="pm25-display">กำลังโหลด...</div>
-            <div id="pm25-time" style="font-size: 0.75rem; color: var(--secondary-color); margin-top: 2px;">-</div>
+        <div class="header-right">
+            <!-- ปุ่ม Workspace เพิ่มตามภาพที่แนบ -->
+            <a href="https://praetinee.github.io/JanWorkspace/" class="btn-workspace">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Workspace
+            </a>
+
+            <div id="pm25-widget" class="pm25-widget">
+                <div style="font-size: 0.85rem; color: var(--secondary-color);">ค่าฝุ่น PM2.5 สันทราย (Real-time)</div>
+                <div style="font-size: 1.8rem; font-weight: 600; line-height: 1.2;" class="pm25-val" id="pm25-display">กำลังโหลด...</div>
+                <div id="pm25-time" style="font-size: 0.75rem; color: var(--secondary-color); margin-top: 2px;">-</div>
+            </div>
         </div>
     </header>
 
