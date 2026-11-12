@@ -96,6 +96,18 @@
         .status-ready { background-color: var(--success-bg); color: var(--success-color); }
         .status-pending { background-color: var(--warning-bg); color: var(--warning-color); }
         .status-danger { background-color: var(--danger-bg); color: #fff; }
+        /* --- เพิ่ม CSS ส่วนแบบประเมินห้องปลอดฝุ่น --- */
+        .assessment-section { margin-top: 30px; margin-bottom: 20px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; }
+        .assessment-header { background-color: var(--primary-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .assessment-header h2 { margin: 0; font-size: 1.1rem; color: white; }
+        .assessment-body { padding: 20px; display: grid; gap: 12px; }
+        .checklist-item { display: flex; align-items: flex-start; gap: 15px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+        .checklist-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .checklist-item input[type="checkbox"] { margin-top: 2px; width: 20px; height: 20px; accent-color: var(--primary-color); cursor: pointer; flex-shrink: 0; }
+        .checklist-text { font-size: 0.95rem; color: #334155; line-height: 1.5; }
+        .checklist-text strong { color: var(--primary-color); margin-right: 5px; }
+        .critical-note { color: var(--danger-bg); font-size: 0.85rem; font-weight: 600; display: block; margin-top: 6px; }
+        /* --- จบ CSS ส่วนแบบประเมิน --- */
     </style>
 </head>
 <body>
@@ -172,7 +184,84 @@
             </tbody>
         </table>
     </div>
+</tbody>
+        </table>
+    </div>
+
+    <!-- --- เริ่มส่วนแบบประเมินห้องปลอดฝุ่น กรมอนามัย --- -->
+    <div class="assessment-section">
+        <div class="assessment-header">
+            <h2>รายการประเมินห้องปลอดฝุ่น (กรมอนามัย)</h2>
+            <span style="font-size: 0.9rem; opacity: 0.9;">จำนวน 15 ข้อ</span>
+        </div>
+        <div class="assessment-body">
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 1:</strong> มีการกำหนดนโยบาย และแนวทางการจัดทำห้องปลอดฝุ่นหรือการลด ฝุ่นละอองในอาคาร หรือการจัด 5 ส. ในอาคาร</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 2:</strong> มีการมอบหมายเจ้าหน้าที่หรือบุคลากรผ่านการอบรม/มีความรู้ในการดูแลห้องปลอดฝุ่นอย่างชัดเจน</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 3:</strong> มีมาตรการเพื่อดูแลสุขภาพภายในบริเวณห้องปลอดฝุ่น (สื่อสารแจ้งเตือน ประชาสัมพันธ์ สวมหน้ากากอนามัย)</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 4:</strong> มีมาตรการสร้างการมีส่วนร่วมของชุมชน เพื่อลดฝุ่นละอองและป้องกันผลกระทบต่อสุขภาพ</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 5:</strong> ห้องมีความสะอาด ไม่มีวัสดุอุปกรณ์ที่เป็นแหล่งสะสมฝุ่นละอองภายในห้อง</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 6:</strong> ภายในห้องไม่มีแหล่งก่อมลพิษ เช่น จุดเทียน จุดธูป สูบบุหรี่</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 7:</strong> มีการปิดประตู หน้าต่าง หรือใช้วัสดุปิดช่องหรือรูต่าง ๆ เพื่อไม่ให้อากาศภายนอกเข้าภายในอาคาร</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 8:</strong> มีมาตรการที่ลดการก่อให้เกิดฝุ่นโดยรอบ เช่น กำหนดจุดจอดรถหรือการรับ-ส่งให้ห่างจากห้องปลอดฝุ่น งดกิจกรรมการเผาหรือกิจกรรมที่ก่อให้เกิดฝุ่น ดูแลถนนไม่ให้เกิดฝุ่นละออง เป็นต้น</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 9:</strong> มีการใช้อุปกรณ์เพื่อลดปริมาณฝุ่นภายในห้อง เช่น เครื่องฟอกอากาศ หรือเครื่องเติมอากาศและกรองอากาศ โดยเลือกขนาดที่เหมาะสมกับขนาดห้อง และมีการควบคุมอุณหภูมิห้อง ให้มีค่าไม่เกิน 30 องศาเซลเซียส
+                <span class="critical-note">* หากตอบ ไม่ใช่ = ไม่ผ่านเกณฑ์</span></span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 10:</strong> มีการระบายอากาศในช่วงเวลาที่มีฝุ่นน้อยเพื่อลดการสะสมของ CO2 เช่น เปิดพัดลมหรือเครื่องปรับอากาศเพื่อหมุนเวียนอากาศภายในห้องหรือเปิดหน้าต่างและประตู เพื่อให้มีการระบายอากาศในห้อง</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 11:</strong> ทำความสะอาดพื้น วัสดุ เฟอร์นิเจอร์ ชั้นวาง ฯลฯ เป็นประจำทุกวัน</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 12:</strong> ห้ามสูบบุหรี่ภายในอาคารและภายนอกบริเวณห้อง</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 13:</strong> มีการจัดพื้นที่สีเขียว buffer zone หรือปลูกต้นไม้เพื่อดักฝุ่น</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 14:</strong> ระดับค่าฝุ่นภายในห้อง น้อยกว่า 37.5 ไมโครกรัมต่อลูกบาศก์เมตร หรือ กรณีถ้าฝุ่นในบรรยากาศสูงกว่า 75.0 มคก./ลบ.ม.ขึ้นไป ระดับค่าฝุ่น PM2.5 ในห้องลดลง 50% (I/O = 0.5)</span>
+            </label>
+            <label class="checklist-item">
+                <input type="checkbox">
+                <span class="checklist-text"><strong>ข้อ 15:</strong> ระดับค่าฝุ่นภายในห้อง น้อยกว่า 25 ไมโครกรัมต่อลูกบาศก์เมตร (ตามประกาศค่าเฝ้าระวังคุณภาพอากาศในอาคาร)</span>
+            </label>
+        </div>
+    </div>
+    <!-- --- จบส่วนแบบประเมินห้องปลอดฝุ่น --- -->
 </div>
+
+<script>
 
 <script>
     const googleSheetCsvUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&gid=492889691"; 
