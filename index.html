@@ -96,6 +96,7 @@
         .status-ready { background-color: var(--success-bg); color: var(--success-color); }
         .status-pending { background-color: var(--warning-bg); color: var(--warning-color); }
         .status-danger { background-color: var(--danger-bg); color: #fff; }
+
         /* --- เพิ่ม CSS ส่วนแบบประเมินห้องปลอดฝุ่น --- */
         .assessment-section { margin-top: 30px; margin-bottom: 20px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; }
         .assessment-header { background-color: var(--primary-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
@@ -161,6 +162,7 @@
             <button class="active" onclick="filterTable('all', this)">แสดงทั้งหมด</button>
             <button onclick="filterTable('ready', this)">พร้อมลงทะเบียน</button>
             <button onclick="filterTable('pending', this)">รอจัดหา / เฝ้าระวัง</button>
+            <button onclick="filterTable('assessment', this)">15 ข้อการประเมิน</button>
         </div>
         <div>
             <input type="text" id="searchInput" class="search-box" placeholder="ค้นหาชื่อห้อง, อาคาร..." onkeyup="searchTable()">
@@ -184,12 +186,9 @@
             </tbody>
         </table>
     </div>
-</tbody>
-        </table>
-    </div>
 
     <!-- --- เริ่มส่วนแบบประเมินห้องปลอดฝุ่น กรมอนามัย --- -->
-    <div class="assessment-section">
+    <div class="assessment-section" style="display: none;">
         <div class="assessment-header">
             <h2>รายการประเมินห้องปลอดฝุ่น (กรมอนามัย)</h2>
             <span style="font-size: 0.9rem; opacity: 0.9;">จำนวน 15 ข้อ</span>
@@ -260,8 +259,6 @@
     </div>
     <!-- --- จบส่วนแบบประเมินห้องปลอดฝุ่น --- -->
 </div>
-
-<script>
 
 <script>
     const googleSheetCsvUrl = "https://docs.google.com/spreadsheets/d/1K9S8nN2GvNWv7pG0i17Hfuf83D9po1HPK7E3o4qzDaU/export?format=csv&gid=492889691"; 
@@ -429,11 +426,31 @@
         document.querySelectorAll('.filter-group button').forEach(btn => btn.classList.remove('active'));
         buttonElement.classList.add('active');
 
-        const rows = document.querySelectorAll('.data-row');
-        rows.forEach(row => {
-            if (status === 'all' || row.getAttribute('data-status') === status) row.style.display = '';
-            else row.style.display = 'none';
-        });
+        const tableContainer = document.querySelector('.table-container');
+        const kpiGrid = document.querySelector('.kpi-grid');
+        const searchBox = document.getElementById('searchInput');
+        const assessmentSection = document.querySelector('.assessment-section');
+
+        if (status === 'assessment') {
+            // ปิดตาราง, KPI, ช่องค้นหา แล้วเปิดโหมดแบบประเมิน
+            tableContainer.style.display = 'none';
+            kpiGrid.style.display = 'none';
+            searchBox.style.display = 'none';
+            assessmentSection.style.display = 'block';
+        } else {
+            // แสดงตารางและ KPI ซ่อนแบบประเมิน
+            tableContainer.style.display = '';
+            kpiGrid.style.display = 'grid';
+            searchBox.style.display = '';
+            assessmentSection.style.display = 'none';
+
+            // กรองข้อมูลตารางตามสถานะ
+            const rows = document.querySelectorAll('.data-row');
+            rows.forEach(row => {
+                if (status === 'all' || row.getAttribute('data-status') === status) row.style.display = '';
+                else row.style.display = 'none';
+            });
+        }
     }
 
     function searchTable() {
