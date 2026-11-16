@@ -590,10 +590,17 @@
     function buildPlanRoom(row) {
         const building = (row["อาคาร"] || "-").trim();
         const name = (row["ชื่อ/รายละเอียดห้อง"] || "").trim();
-        const sysKey = Object.keys(row).find(k => k.includes("ระบบปรับอากาศและอุปกรณ์กรองฝุ่น"));
+        
+        // ปรับให้อ่านชื่อคอลัมน์แบบยืดหยุ่น ป้องกัน Google Sheets เปลี่ยนชื่อหัวคอลัมน์
+        const sysKey = Object.keys(row).find(k => k.includes("ระบบปรับอากาศ") || k.includes("อุปกรณ์กรองฝุ่น"));
         const sys = sysKey ? (row[sysKey] || "") : "";
-        const acRaw = (row["จำนวนเครื่องปรับอากาศต่อห้อง"] || "").toString();
-        const purRaw = (row["จำนวนเครื่องฟอกอากาศต่อห้อง"] || "").toString();
+        
+        const acKey = Object.keys(row).find(k => k.includes("เครื่องปรับอากาศ") || k.includes("แอร์"));
+        const acRaw = acKey ? (row[acKey] || "").toString() : "";
+        
+        const purKey = Object.keys(row).find(k => k.includes("เครื่องฟอก"));
+        const purRaw = purKey ? (row[purKey] || "").toString() : "";
+        
         const note = row["หมายเหตุ"] || "";
         const full = Object.values(row).join(" ").toLowerCase();
         const subMatch = note.match(/(\d+)\s*ห้อง/);
@@ -602,14 +609,17 @@
         if (ruleIndex < 0) ruleIndex = PLAN_RULES.length;
         const rule = PLAN_RULES[ruleIndex] || [null, 3, "ยังไม่ได้จัดกลุ่ม โปรดระบุเหตุผล"];
 
+        const acCount = parseInt(acRaw, 10) || 0;
+        const purCount = parseInt(purRaw, 10) || 0;
+
         return {
             key: building + "|" + name, building, name,
             sub: subMatch ? parseInt(subMatch[1], 10) : 1,
-            hasAC: sys.includes("เครื่องปรับอากาศ"),
+            hasAC: sys.includes("เครื่องปรับอากาศ") || sys.includes("แอร์") || acCount > 0,
             central: acRaw.includes("เซ็นทรัล"),
-            acCount: parseInt(acRaw, 10) || 0,
-            purCount: parseInt(purRaw, 10) || 0,
-            sysPurifier: sys.includes("เครื่องฟอก"),
+            acCount: acCount,
+            purCount: purCount,
+            sysPurifier: sys.includes("เครื่องฟอก") || purCount > 0,
             pressure: full.includes("positive pressure") ? "positive" : (full.includes("negative pressure") ? "negative" : ""),
             ruleIndex, defaultLevel: rule[1], defaultReason: rule[2],
             saved: {}
@@ -640,14 +650,26 @@
         const pu = { warn: "", hint: "" };
         if (vol) {
             pu.need = vol * s.achPurifier;
-            pu.n = Math.ceil(pu.need / s.cadrUnit);
-            pu.buy = Math.max(0, pu.n - r.purCount);
-            pu.cost = pu.buy * s.pricePurifier * r.sub;
-            pu.text = `ต้องการ CADR รวม ${Math.round(pu.need).toLocaleString()} ลบ.ม./ชม. = ${pu.n} เครื่อง` +
-                (r.purCount ? ` (มีแล้ว ${r.purCount} ซื้อเพิ่ม ${pu.buy})` : "") + (r.sub > 1 ? ` ต่อห้อง × ${r.sub} ห้อง` : "");
+            const currentCadr = num(d.existingCadr) || 0;
+            const remainingNeed = Math.max(0, pu.need - currentCadr); // หา CADR ที่ยังขาด
+            pu.n = Math.ceil(remainingNeed / s.cadrUnit); // จำนวนเครื่องที่ต้องซื้อใหม่
+            pu.cost = pu.n * s.pricePurifier * r.sub;
+            
+            if (currentCadr >= pu.need) {
+                pu.text = `ต้องการ CADR ${Math.round(pu.need).toLocaleString()} ลบ.ม./ชม. (มีแล้ว ${currentCadr}) เพียงพอแล้ว ไม่ต้องซื้อเพิ่ม`;
+                pu.cost = 0;
+            } else if (currentCadr > 0) {
+                pu.text = `ต้องการ CADR ${Math.round(pu.need).toLocaleString()} (มีเครื่องเดิม CADR ${currentCadr}) ขาดอีก ${Math.round(remainingNeed).toLocaleString()} ลบ.ม./ชม. = ซื้อเพิ่ม ${pu.n} เครื่อง`;
+            } else {
+                pu.text = `ต้องการ CADR รวม ${Math.round(pu.need).toLocaleString()} ลบ.ม./ชม. = ซื้อใหม่ ${pu.n} เครื่อง`;
+                if (r.purCount > 0) {
+                    pu.hint = `*พบเครื่องเดิม ${r.purCount} เครื่อง โปรดระบุ "CADR เครื่องเดิมรวม" ในช่องด้านบนเพื่อนำมาคำนวณหักลบยอดซื้อ`;
+                }
+            }
+            if (r.sub > 1) pu.text += ` ต่อห้อง × ${r.sub} ห้อง`;
         }
         if (!r.hasAC) pu.warn = "ไม่แนะนำ: ห้องไม่มีแอร์ ถ้าปิดห้องเพื่อเปิดเครื่องฟอก CO₂ จะคั่งและห้องจะร้อน";
-        else pu.hint = "ต้องปิดประตูหน้าต่าง และเปิดระบายอากาศช่วงฝุ่นน้อยเพื่อลด CO₂";
+        else if (!pu.hint) pu.hint = "ต้องปิดประตูหน้าต่าง และเปิดระบายอากาศช่วงฝุ่นน้อยเพื่อลด CO₂";
         out.methods.purifier = pu;
 
         // Positive pressure DIY
@@ -760,6 +782,7 @@
                 <div class="dim-grid" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)"></label>
                     ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("people", "จำนวนคนในห้อง")}
+                    ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
                     <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
                         <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
                         ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
@@ -844,7 +867,8 @@
     }
 
     async function initPlan(data) {
-        planRooms = data.map(buildPlanRoom);
+        // กรองห้องที่เป็น Positive Pressure ออกจากแผนปรับปรุงและงบเลย
+        planRooms = data.map(buildPlanRoom).filter(r => r.pressure !== "positive");
         planSettings = {};
         PLAN_SETTING_FIELDS.forEach(f => planSettings[f[0]] = f[2]);
 
