@@ -891,7 +891,9 @@
         let stored = { rows: {}, settings: {} };
         if (APPS_SCRIPT_URL) {
             try {
-                const json = await (await fetch(APPS_SCRIPT_URL)).json();
+                // เติม ?t=เวลาปัจจุบัน เพื่อป้องกัน Cache และใส่คำสั่งบังคับโหลดใหม่
+                const res = await fetch(APPS_SCRIPT_URL + "?t=" + new Date().getTime(), { cache: "no-store", redirect: "follow" });
+                const json = await res.json();
                 if (!json.ok) throw new Error(json.error);
                 stored = json; planOnline = true;
                 banner.className = "plan-banner ok";
