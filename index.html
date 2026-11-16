@@ -651,8 +651,11 @@
         const area = (w && l) ? w * l : num(d.area);
         const assumedH = !num(d.h);
         const h = num(d.h) || s.defaultH;
-        const vol = area ? area * h : null;
-        const out = { area, vol, assumedH, h, methods: {} };
+        
+        const manualVol = num(d.vol_m3);
+        // ถ้าระบุ ลบ.ม. มาโดยตรงให้ใช้เลย ถ้าไม่ระบุ ค่อยเอา ตร.ม. ไปคูณความสูง
+        const vol = manualVol ? manualVol : (area ? area * h : null);
+        const out = { area, vol, assumedH, h, manualVol, methods: {} };
 
         // เครื่องฟอกอากาศ
         const pu = { warn: "", hint: "" };
@@ -736,8 +739,9 @@
     function renderPlanResult(i) {
         const r = planRooms[i], c = calcPlan(r), rec = recommendMethod(r);
         let html = "";
-        if (c.vol) html += `<span class="plan-hint">พื้นที่ ${c.area.toFixed(1)} ตร.ม. ปริมาตร ${c.vol.toFixed(1)} ลบ.ม.${r.sub > 1 ? " ต่อห้องย่อย" : ""}${c.assumedH ? ` (ไม่ได้กรอกความสูง ใช้ค่าสมมติ ${c.h} ม.)` : ""}</span>`;
-        else html += `<span class="plan-hint">กรอกกว้าง × ยาว หรือ ตร.ม. เพื่อคำนวณจำนวนเครื่องฟอกและชุด positive pressure${r.sub > 1 ? " (กรอกขนาดของห้องย่อย 1 ห้อง)" : ""}</span>`;
+        if (c.manualVol) html += `<span class="plan-hint">ใช้ปริมาตรที่ระบุเอง ${c.vol.toFixed(1)} ลบ.ม.${r.sub > 1 ? " ต่อห้องย่อย" : ""}</span>`;
+        else if (c.vol) html += `<span class="plan-hint">พื้นที่ ${c.area.toFixed(1)} ตร.ม. ปริมาตร ${c.vol.toFixed(1)} ลบ.ม.${r.sub > 1 ? " ต่อห้องย่อย" : ""}${c.assumedH ? ` (ไม่ได้กรอกความสูง ใช้ค่าสมมติ ${c.h} ม.)` : ""}</span>`;
+        else html += `<span class="plan-hint">กรอกกว้าง × ยาว, ตร.ม. หรือ ลบ.ม. เพื่อคำนวณจำนวนเครื่องฟอกและชุด positive pressure${r.sub > 1 ? " (กรอกขนาดของห้องย่อย 1 ห้อง)" : ""}</span>`;
         html += `<table><thead><tr><th>วิธี</th><th>ต้องใช้</th><th>ประมาณราคา</th></tr></thead><tbody>`;
         ["purifier", "pp", "sheet", "other", "keep"].forEach(m => {
             if (m === "keep" && !r.pressure && c.chosen !== "keep") return;
@@ -789,7 +793,7 @@
                 </summary>
                 <div class="dim-grid" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)"></label>
-                    ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("people", "จำนวนคนในห้อง")}
+                    ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("vol_m3", "หรือ ลบ.ม.")}${f("people", "จำนวนคนในห้อง")}
                     ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
                     <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
                         <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
@@ -848,7 +852,7 @@
 
     async function savePlanRoom(i, btn) {
         const r = planRooms[i], d = r.saved, msg = document.getElementById("plan-msg-" + i);
-        const row = { key: r.key, building: r.building, name: r.name, level: roomLevel(r), reason: roomReason(r), method: d.method || "", w: d.w || "", l: d.l || "", h: d.h || "", area: d.area || "", people: d.people || "" };
+        const row = { key: r.key, building: r.building, name: r.name, level: roomLevel(r), reason: roomReason(r), method: d.method || "", w: d.w || "", l: d.l || "", h: d.h || "", area: d.area || "", vol_m3: d.vol_m3 || "", existingCadr: d.existingCadr || "", people: d.people || "" };
         btn.disabled = true; msg.innerText = "กำลังบันทึก...";
         try {
             if (planOnline) {
