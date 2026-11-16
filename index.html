@@ -300,11 +300,7 @@
             <summary>ตั้งค่าสมมติฐานการคำนวณและราคาต่อหน่วย (แก้ไขได้)</summary>
             <p class="plan-hint">ตัวเลขตั้งต้นเป็นค่าประมาณเพื่อเริ่มใช้งาน ยังไม่ใช่ราคาจากใบเสนอราคา ให้แก้เป็นสเปกและราคาจริงของรุ่นที่จะจัดซื้อ</p>
             <div class="settings-grid" id="plan-settings-grid"></div>
-            <div class="settings-grid">
-                <label>รหัสสำหรับบันทึก (ถามผู้ดูแลระบบ)
-                    <input type="password" id="plan-passcode" autocomplete="off">
-                </label>
-            </div>
+            
             <button class="plan-btn" onclick="savePlanSettings(this)">บันทึกการตั้งค่า</button>
             <span class="save-msg" id="plan-settings-msg"></span>
         </details>
@@ -802,19 +798,16 @@
     function localSet(obj) { try { localStorage.setItem("cleanAirPlan", JSON.stringify(obj)); return true; } catch (e) { return false; } }
 
     async function planPost(payload) {
-        let passInput = document.getElementById("plan-passcode");
-        // ถ้ายันไม่ได้กรอกรหัสผ่าน ให้เด้งหน้าต่าง Prompt ขึ้นมาถาม
-        if (!passInput.value) {
-            let p = prompt("กรุณาระบุรหัส Passcode สำหรับบันทึกข้อมูล (พิมพ์แล้วกด OK):");
-            if (p === null || p.trim() === "") throw new Error("ยกเลิกการบันทึก (ไม่ได้ใส่ Passcode)");
-            passInput.value = p.trim();
+        // บังคับเด้งถามรหัสผ่าน "ทุกครั้ง" ที่กดบันทึก
+        let p = prompt("กรุณาระบุรหัส Passcode สำหรับบันทึกข้อมูล (พิมพ์แล้วกด OK):");
+        if (p === null || p.trim() === "") {
+            throw new Error("ยกเลิกการบันทึก (ไม่ได้ใส่รหัสผ่าน)");
         }
-        payload.passcode = passInput.value;
+        payload.passcode = p.trim();
+        
         const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const json = await res.json();
         if (!json.ok) {
-            // ถ้าระบบฟ้องว่ารหัสผิด ให้ล้างช่องรหัสผ่าน เพื่อให้เด้งถามใหม่เมื่อกดบันทึกครั้งหน้า
-            if (json.error && json.error.includes("รหัส")) passInput.value = "";
             throw new Error(json.error || "บันทึกไม่สำเร็จ");
         }
     }
