@@ -109,6 +109,36 @@
         .checklist-text strong { color: var(--primary-color); margin-right: 5px; }
         .critical-note { color: var(--danger-bg); font-size: 0.85rem; font-weight: 600; display: block; margin-top: 6px; }
         /* --- จบ CSS ส่วนแบบประเมิน --- */
+
+        /* --- CSS ส่วนแผนปรับปรุงและงบ --- */
+        .plan-section { display: none; }
+        .plan-banner { padding: 10px 16px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 15px; border: 1px solid #fde047; background: #fefce8; color: #854d0e; }
+        .plan-banner.ok { border-color: #a7f3d0; background: #ecfdf5; color: #065f46; }
+        .plan-settings { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px 20px; margin-bottom: 20px; }
+        .plan-settings summary { cursor: pointer; font-weight: 600; color: var(--primary-color); }
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 15px 0; }
+        .settings-grid label, .dim-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: var(--secondary-color); }
+        .plan-section input, .plan-section select { font-family: 'Chakra Petch', sans-serif; font-size: 0.9rem; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100%; box-sizing: border-box; background: #fff; }
+        .plan-btn { font-family: 'Chakra Petch', sans-serif; font-size: 0.9rem; padding: 7px 16px; border-radius: 4px; border: 1px solid var(--primary-color); background: var(--primary-color); color: #fff; cursor: pointer; }
+        .plan-btn:disabled { opacity: 0.6; cursor: wait; }
+        .save-msg { font-size: 0.8rem; margin-left: 10px; color: var(--secondary-color); }
+        .level-header { margin: 25px 0 10px; padding: 10px 16px; border-radius: 6px; color: #fff; font-weight: 600; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .level-1 { background: #b91c1c; } .level-2 { background: #c2410c; } .level-3 { background: #a16207; } .level-4 { background: #475569; }
+        .plan-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .plan-card-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+        .plan-card-head h4 { margin: 0; font-size: 1rem; color: #1e293b; }
+        .plan-card-head .bld { font-size: 0.8rem; color: var(--secondary-color); }
+        .state-tag { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; background: var(--info-bg); border: 1px solid #cbd5e1; color: var(--secondary-color); margin: 6px 4px 0 0; }
+        .state-tag.bad { background: var(--warning-bg); border-color: #fecaca; color: var(--warning-color); }
+        .state-tag.good { background: var(--success-bg); border-color: #a7f3d0; color: var(--success-color); }
+        .dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin: 12px 0; }
+        .dim-grid .wide { grid-column: span 2; }
+        .plan-result table { font-size: 0.85rem; margin-top: 8px; }
+        .plan-result th, .plan-result td { padding: 7px 10px; }
+        .plan-result tr.chosen td { background: #eff6ff; font-weight: 500; }
+        .plan-warn { color: var(--warning-color); font-size: 0.8rem; display: block; }
+        .plan-hint { color: var(--secondary-color); font-size: 0.8rem; display: block; }
+        /* --- จบ CSS ส่วนแผนปรับปรุงและงบ --- */
     </style>
 </head>
 <body>
@@ -163,6 +193,7 @@
             <button onclick="filterTable('ready', this)">พร้อมลงทะเบียน</button>
             <button onclick="filterTable('pending', this)">รอจัดหา / เฝ้าระวัง</button>
             <button onclick="filterTable('assessment', this)">15 ข้อการประเมิน</button>
+            <button onclick="filterTable('plan', this)">แผนปรับปรุงและงบ</button>
         </div>
         <div>
             <input type="text" id="searchInput" class="search-box" placeholder="ค้นหาชื่อห้อง, อาคาร..." onkeyup="searchTable()">
@@ -258,6 +289,29 @@
         </div>
     </div>
     <!-- --- จบส่วนแบบประเมินห้องปลอดฝุ่น --- -->
+
+    <!-- --- เริ่มส่วนแผนปรับปรุงและงบ --- -->
+    <div class="plan-section">
+        <div id="plan-banner" class="plan-banner">กำลังโหลดข้อมูลแผนปรับปรุง...</div>
+
+        <div class="kpi-grid" id="plan-summary"></div>
+
+        <details class="plan-settings">
+            <summary>ตั้งค่าสมมติฐานการคำนวณและราคาต่อหน่วย (แก้ไขได้)</summary>
+            <p class="plan-hint">ตัวเลขตั้งต้นเป็นค่าประมาณเพื่อเริ่มใช้งาน ยังไม่ใช่ราคาจากใบเสนอราคา ให้แก้เป็นสเปกและราคาจริงของรุ่นที่จะจัดซื้อ</p>
+            <div class="settings-grid" id="plan-settings-grid"></div>
+            <div class="settings-grid">
+                <label>รหัสสำหรับบันทึก (ถามผู้ดูแลระบบ)
+                    <input type="password" id="plan-passcode" autocomplete="off">
+                </label>
+            </div>
+            <button class="plan-btn" onclick="savePlanSettings(this)">บันทึกการตั้งค่า</button>
+            <span class="save-msg" id="plan-settings-msg"></span>
+        </details>
+
+        <div id="plan-list"></div>
+    </div>
+    <!-- --- จบส่วนแผนปรับปรุงและงบ --- -->
 </div>
 
 <script>
@@ -420,6 +474,8 @@
         document.getElementById("kpi-pending-rooms").innerText = `ต้องจัดหาสำหรับ ${pendingRooms} ห้องย่อย`;
         
         document.getElementById("table-body").innerHTML = tableHTML;
+
+        initPlan(data);
     }
 
     function filterTable(status, buttonElement) {
@@ -430,19 +486,22 @@
         const kpiGrid = document.querySelector('.kpi-grid');
         const searchBox = document.getElementById('searchInput');
         const assessmentSection = document.querySelector('.assessment-section');
+        const planSection = document.querySelector('.plan-section');
 
-        if (status === 'assessment') {
-            // ปิดตาราง, KPI, ช่องค้นหา แล้วเปิดโหมดแบบประเมิน
+        if (status === 'assessment' || status === 'plan') {
+            // ปิดตาราง, KPI, ช่องค้นหา แล้วเปิดโหมดแบบประเมิน หรือ แผนปรับปรุง
             tableContainer.style.display = 'none';
             kpiGrid.style.display = 'none';
             searchBox.style.display = 'none';
-            assessmentSection.style.display = 'block';
+            assessmentSection.style.display = status === 'assessment' ? 'block' : 'none';
+            planSection.style.display = status === 'plan' ? 'block' : 'none';
         } else {
             // แสดงตารางและ KPI ซ่อนแบบประเมิน
             tableContainer.style.display = '';
             kpiGrid.style.display = 'grid';
             searchBox.style.display = '';
             assessmentSection.style.display = 'none';
+            planSection.style.display = 'none';
 
             // กรองข้อมูลตารางตามสถานะ
             const rows = document.querySelectorAll('.data-row');
@@ -472,6 +531,343 @@
             if (matchesSearch && matchesFilter) row.style.display = '';
             else row.style.display = 'none';
         });
+    }
+
+    /* ===================== แผนปรับปรุงและงบ ===================== */
+
+    // วาง URL ของ Google Apps Script Web App (ลงท้ายด้วย /exec) ที่นี่ เพื่อให้บันทึกลง Google Sheets ต้นฉบับได้
+    // ถ้าเว้นว่าง ระบบจะบันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น
+    const APPS_SCRIPT_URL = "";
+
+    const PLAN_SETTING_FIELDS = [
+        ["defaultH",      "ความสูงเพดานสมมติ เมื่อไม่ได้กรอก (ม.)", 2.7],
+        ["achPurifier",   "เครื่องฟอก: รอบการฟอกเป้าหมาย (เท่าของปริมาตรห้อง/ชม.)", 5],
+        ["cadrUnit",      "เครื่องฟอก: CADR ต่อเครื่อง (ลบ.ม./ชม.)", 300],
+        ["pricePurifier", "เครื่องฟอก: ราคาต่อเครื่อง (บาท)", 6000],
+        ["achPP",         "Positive pressure DIY: อัตราเติมอากาศ (เท่าของปริมาตรห้อง/ชม.)", 2],
+        ["m3PerPerson",   "Positive pressure DIY: อากาศสดต่อคน (ลบ.ม./ชม.)", 25],
+        ["flowPP",        "Positive pressure DIY: ลมที่จ่ายได้จริงต่อชุด หลังผ่านแผ่นกรอง (ลบ.ม./ชม.)", 150],
+        ["pricePP",       "Positive pressure DIY: ราคาต่อชุด (บาท)", 2500],
+        ["priceSheet",    "แผ่นกรองติดแอร์: ราคาต่อแอร์ 1 เครื่อง (บาท)", 400],
+        ["priceSeal",     "อุดช่องรั่ว ขอบประตู-หน้าต่าง: ราคาต่อห้อง (บาท)", 500],
+        ["priceCO2",      "เครื่องวัด CO₂: ราคาต่อห้อง (บาท)", 1500]
+    ];
+
+    // เรียงจากกลุ่มเปราะบางที่สุดไปน้อยที่สุด กฎที่อยู่ก่อนจะถูกใช้ก่อน
+    const PLAN_RULES = [
+        [/TB/,                       3, "ห้องแยกโรคติดเชื้อทางอากาศ ต้องเป็น negative pressure เพื่อไม่ให้เชื้อออกนอกห้อง จึงไม่ปรับเป็นห้องปลอดฝุ่นแบบ positive pressure"],
+        [/NICU|ทารก/,                1, "ทารกแรกเกิดและทารกป่วยหนัก ปอดยังพัฒนาไม่เต็มที่ เป็นกลุ่มเปราะบางที่สุด"],
+        [/กุมาร/,                    1, "เด็กเล็กหายใจเร็ว ได้รับฝุ่นต่อน้ำหนักตัวมากกว่าผู้ใหญ่ และนอนรักษาต่อเนื่อง"],
+        [/วิกฤต|ICU/,                1, "ผู้ป่วยวิกฤต หลายรายมีภาวะหัวใจหรือปอดล้มเหลวอยู่แล้ว"],
+        [/หลังคลอด/,                 1, "ทารกแรกเกิดอยู่กับมารดาตลอด 24 ชั่วโมง"],
+        [/ห้องคลอด|รอคลอด/,          1, "หญิงคลอดและทารกแรกเกิดในชั่วโมงแรกของชีวิต"],
+        [/ไตเทียม/,                  1, "ผู้ป่วยไตเรื้อรังเสี่ยงโรคหัวใจและหลอดเลือดสูง มาฟอกไตครั้งละหลายชั่วโมง สัปดาห์ละหลายครั้ง"],
+        [/มลพิษ/,                    2, "ผู้ป่วยที่มีอาการจากฝุ่นหรือโรคทางเดินหายใจมารับบริการโดยตรง"],
+        [/ฝากครรภ์/,                 2, "หญิงตั้งครรภ์ ฝุ่นมีผลต่อทารกในครรภ์"],
+        [/หอผู้ป่วย|ห้องพิเศษ/,       2, "ผู้ป่วยในนอนรักษาต่อเนื่อง 24 ชั่วโมง มีผู้สูงอายุและผู้ป่วยโรคเรื้อรังจำนวนมาก"],
+        [/ฉุกเฉิน|\(ER\)/,           2, "ผู้ป่วยฉุกเฉิน รวมถึงผู้ป่วยหอบหืด ถุงลมโป่งพอง และโรคหัวใจกำเริบ"],
+        [/Wound/i,                   2, "ผู้ป่วยแผลเรื้อรัง ส่วนใหญ่เป็นผู้สูงอายุและผู้ป่วยเบาหวาน"],
+        [/ผ่าตัด|วิสัญญี|surgery|St[r]?erile/i, 2, "ผู้ป่วยผ่าตัดและดมยาสลบ อยู่ระยะสั้นแต่ระบบหายใจเปราะบางในช่วงนั้น"],
+        [/ส่องกล้อง/,                3, "ผู้ป่วยทำหัตถการระยะสั้น"],
+        [/OPD/,                      3, "ผู้ป่วยนอกอยู่ระยะสั้น แต่มีจำนวนมากและมีกลุ่มเสี่ยงปนอยู่"],
+        [/กายภาพ|ฟื้นฟู|แผนไทย/,      3, "ผู้ป่วยนอกมารับบริการเป็นครั้ง ครั้งละไม่นาน"],
+        [/ฟัน|CT|X-ray|แลป|อาชีวเวชกรรม/i, 3, "ผู้รับบริการอยู่ระยะสั้น ส่วนใหญ่สุขภาพค่อนข้างแข็งแรง"],
+        [/ประชุม|ควบคุมโรค/,         4, "ไม่ใช่พื้นที่ดูแลผู้ป่วยโดยตรง ผู้ใช้ส่วนใหญ่เป็นเจ้าหน้าที่"],
+        [/โถง/,                      4, "โถงเปิดโล่ง ปิดห้องไม่ได้ คนอยู่ระยะสั้น"]
+    ];
+    const PLAN_LEVEL_NAMES = { 1: "ระดับ 1 เร่งด่วนที่สุด", 2: "ระดับ 2 เร่งด่วน", 3: "ระดับ 3 ปานกลาง", 4: "ระดับ 4 รอได้" };
+    const PLAN_METHOD_NAMES = { purifier: "เครื่องฟอกอากาศ", pp: "Positive pressure DIY", sheet: "แผ่นกรองติดแอร์", other: "อุดช่องรั่ว + เครื่องวัด CO₂", keep: "คงระบบเดิม ไม่ใช้งบ" };
+
+    let planRooms = [];
+    let planSettings = {};
+    let planOnline = false;
+
+    function esc(v) {
+        return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    function num(v) {
+        const n = parseFloat(String(v == null ? "" : v).replace(/,/g, ""));
+        return isNaN(n) || n <= 0 ? null : n;
+    }
+    function baht(n) { return Math.round(n).toLocaleString("th-TH") + " บาท"; }
+
+    function buildPlanRoom(row) {
+        const building = (row["อาคาร"] || "-").trim();
+        const name = (row["ชื่อ/รายละเอียดห้อง"] || "").trim();
+        const sysKey = Object.keys(row).find(k => k.includes("ระบบปรับอากาศและอุปกรณ์กรองฝุ่น"));
+        const sys = sysKey ? (row[sysKey] || "") : "";
+        const acRaw = (row["จำนวนเครื่องปรับอากาศต่อห้อง"] || "").toString();
+        const purRaw = (row["จำนวนเครื่องฟอกอากาศต่อห้อง"] || "").toString();
+        const note = row["หมายเหตุ"] || "";
+        const full = Object.values(row).join(" ").toLowerCase();
+        const subMatch = note.match(/(\d+)\s*ห้อง/);
+
+        let ruleIndex = PLAN_RULES.findIndex(r => r[0].test(name));
+        if (ruleIndex < 0) ruleIndex = PLAN_RULES.length;
+        const rule = PLAN_RULES[ruleIndex] || [null, 3, "ยังไม่ได้จัดกลุ่ม โปรดระบุเหตุผล"];
+
+        return {
+            key: building + "|" + name, building, name,
+            sub: subMatch ? parseInt(subMatch[1], 10) : 1,
+            hasAC: sys.includes("เครื่องปรับอากาศ"),
+            central: acRaw.includes("เซ็นทรัล"),
+            acCount: parseInt(acRaw, 10) || 0,
+            purCount: parseInt(purRaw, 10) || 0,
+            sysPurifier: sys.includes("เครื่องฟอก"),
+            pressure: full.includes("positive pressure") ? "positive" : (full.includes("negative pressure") ? "negative" : ""),
+            ruleIndex, defaultLevel: rule[1], defaultReason: rule[2],
+            saved: {}
+        };
+    }
+
+    function roomLevel(r) { return parseInt(r.saved.level, 10) || r.defaultLevel; }
+    function roomReason(r) { return r.saved.reason || r.defaultReason; }
+
+    function recommendMethod(r) {
+        if (r.pressure) return "keep";
+        if (!r.hasAC) return "pp";
+        if (r.purCount > 0) return "purifier";
+        if (roomLevel(r) <= 2 || r.central) return "purifier";
+        return "sheet";
+    }
+
+    function calcPlan(r) {
+        const s = planSettings, d = r.saved;
+        const w = num(d.w), l = num(d.l), people = num(d.people) || 0;
+        const area = (w && l) ? w * l : num(d.area);
+        const assumedH = !num(d.h);
+        const h = num(d.h) || s.defaultH;
+        const vol = area ? area * h : null;
+        const out = { area, vol, assumedH, h, methods: {} };
+
+        // เครื่องฟอกอากาศ
+        const pu = { warn: "", hint: "" };
+        if (vol) {
+            pu.need = vol * s.achPurifier;
+            pu.n = Math.ceil(pu.need / s.cadrUnit);
+            pu.buy = Math.max(0, pu.n - r.purCount);
+            pu.cost = pu.buy * s.pricePurifier * r.sub;
+            pu.text = `ต้องการ CADR รวม ${Math.round(pu.need).toLocaleString()} ลบ.ม./ชม. = ${pu.n} เครื่อง` +
+                (r.purCount ? ` (มีแล้ว ${r.purCount} ซื้อเพิ่ม ${pu.buy})` : "") + (r.sub > 1 ? ` ต่อห้อง × ${r.sub} ห้อง` : "");
+        }
+        if (!r.hasAC) pu.warn = "ไม่แนะนำ: ห้องไม่มีแอร์ ถ้าปิดห้องเพื่อเปิดเครื่องฟอก CO₂ จะคั่งและห้องจะร้อน";
+        else pu.hint = "ต้องปิดประตูหน้าต่าง และเปิดระบายอากาศช่วงฝุ่นน้อยเพื่อลด CO₂";
+        out.methods.purifier = pu;
+
+        // Positive pressure DIY
+        const pp = { warn: "", hint: "" };
+        if (vol) {
+            pp.need = Math.max(vol * s.achPP, people * s.m3PerPerson);
+            pp.n = Math.ceil(pp.need / s.flowPP);
+            pp.cost = pp.n * s.pricePP * r.sub;
+            pp.text = `ต้องเติมอากาศ ${Math.round(pp.need).toLocaleString()} ลบ.ม./ชม. = ${pp.n} ชุด` + (r.sub > 1 ? ` ต่อห้อง × ${r.sub} ห้อง` : "");
+        }
+        if (r.pressure === "negative") pp.warn = "ห้ามทำก่อนปรึกษาทีมควบคุมการติดเชื้อ: ห้องนี้บันทึกเป็น negative pressure";
+        else if (r.pressure === "positive") pp.hint = "ห้องนี้เป็น positive pressure อยู่แล้ว";
+        else if (!r.hasAC) pp.hint = "อากาศที่เติมเข้าผ่านการกรองแต่ไม่ได้ทำให้เย็น ต้องตรวจว่าอุณหภูมิห้องไม่เกิน 30 °C";
+        else pp.hint = "ต้องอุดช่องรั่วและวัดผลจริงว่าแรงดันในห้องสูงกว่าด้านนอก";
+        out.methods.pp = pp;
+
+        // แผ่นกรองติดแอร์
+        const sh = { warn: "", hint: "" };
+        if (!r.hasAC) sh.warn = "ใช้ไม่ได้: ห้องไม่มีแอร์";
+        else if (r.central) sh.warn = "เซ็นทรัลแอร์: ต้องให้ช่างประเมินการใส่แผ่นกรองที่เครื่องส่งลมหรือช่องลมกลับ ประเมินราคาจากหน้านี้ไม่ได้";
+        else {
+            const n = r.acCount || 1;
+            sh.n = n;
+            sh.cost = n * planSettings.priceSheet * r.sub;
+            sh.text = `${n} เครื่อง${r.acCount ? "" : " (ไม่ได้ระบุจำนวนแอร์ สมมติ 1 เครื่อง)"}` + (r.sub > 1 ? ` ต่อห้อง × ${r.sub} ห้อง` : "");
+            sh.hint = "ถูกและเร็วที่สุด แต่กรองได้น้อยกว่าเครื่องฟอก และทำให้ลมแอร์เบาลง ไม่ต้องใช้ขนาดห้อง";
+        }
+        out.methods.sheet = sh;
+
+        // วิธีอื่น
+        out.methods.other = {
+            warn: "", cost: (s.priceSeal + s.priceCO2) * r.sub,
+            text: "อุดช่องรั่ว + เครื่องวัด CO₂" + (r.sub > 1 ? ` × ${r.sub} ห้อง` : ""),
+            hint: "ใช้เสริมกับวิธีอื่น ลำพังอย่างเดียวลดฝุ่นได้จำกัด"
+        };
+        out.methods.keep = { warn: "", cost: 0, text: r.pressure === "negative" ? "คงระบบเดิม และให้ทีมควบคุมการติดเชื้อยืนยันว่าเป็น negative pressure โดยตั้งใจ" : "มีระบบอยู่แล้ว ดูแลไส้กรองและวัดค่าฝุ่นในห้องเป็นระยะ", hint: "" };
+
+        out.chosen = d.method || recommendMethod(r);
+        const c = out.methods[out.chosen];
+        out.chosenCost = (c && typeof c.cost === "number") ? c.cost : null;
+        return out;
+    }
+
+    function stateTags(r) {
+        const t = [];
+        if (r.central) t.push(["เซ็นทรัลแอร์", "good"]);
+        else if (r.hasAC) t.push(["มีแอร์" + (r.acCount ? " " + r.acCount + " เครื่อง" : ""), "good"]);
+        else t.push(["ไม่มีแอร์", "bad"]);
+        t.push(r.purCount ? ["เครื่องฟอก " + r.purCount + " เครื่อง", "good"] : (r.sysPurifier ? ["มีเครื่องฟอก ไม่ระบุจำนวน", "good"] : ["ไม่มีเครื่องฟอก", "bad"]));
+        if (r.pressure === "positive") t.push(["Positive pressure", "good"]);
+        if (r.pressure === "negative") t.push(["Negative pressure", "bad"]);
+        if (r.sub > 1) t.push([r.sub + " ห้องย่อย", ""]);
+        return t.map(x => `<span class="state-tag ${x[1]}">${esc(x[0])}</span>`).join("");
+    }
+
+    function renderPlanResult(i) {
+        const r = planRooms[i], c = calcPlan(r), rec = recommendMethod(r);
+        let html = "";
+        if (c.vol) html += `<span class="plan-hint">พื้นที่ ${c.area.toFixed(1)} ตร.ม. ปริมาตร ${c.vol.toFixed(1)} ลบ.ม.${r.sub > 1 ? " ต่อห้องย่อย" : ""}${c.assumedH ? ` (ไม่ได้กรอกความสูง ใช้ค่าสมมติ ${c.h} ม.)` : ""}</span>`;
+        else html += `<span class="plan-hint">กรอกกว้าง × ยาว หรือ ตร.ม. เพื่อคำนวณจำนวนเครื่องฟอกและชุด positive pressure${r.sub > 1 ? " (กรอกขนาดของห้องย่อย 1 ห้อง)" : ""}</span>`;
+        html += `<table><thead><tr><th>วิธี</th><th>ต้องใช้</th><th>ประมาณราคา</th></tr></thead><tbody>`;
+        ["purifier", "pp", "sheet", "other", "keep"].forEach(m => {
+            if (m === "keep" && !r.pressure && c.chosen !== "keep") return;
+            const x = c.methods[m];
+            html += `<tr class="${c.chosen === m ? "chosen" : ""}"><td>${PLAN_METHOD_NAMES[m]}${rec === m ? " ★" : ""}</td>` +
+                `<td>${x.text ? esc(x.text) : (x.warn ? "" : "รอขนาดห้อง")}` +
+                (x.warn ? `<span class="plan-warn">${esc(x.warn)}</span>` : "") + (x.hint ? `<span class="plan-hint">${esc(x.hint)}</span>` : "") + `</td>` +
+                `<td>${typeof x.cost === "number" ? baht(x.cost) : "-"}</td></tr>`;
+        });
+        html += `</tbody></table><span class="plan-hint">★ = วิธีที่ระบบแนะนำจากสภาพห้อง แถวสีฟ้า = วิธีที่เลือกและนำไปรวมงบ</span>`;
+        document.getElementById("plan-result-" + i).innerHTML = html;
+    }
+
+    function renderPlanSummary() {
+        const sum = { 1: 0, 2: 0, 3: 0, 4: 0 }, cnt = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let missing = 0;
+        planRooms.forEach(r => {
+            const c = calcPlan(r), lv = roomLevel(r);
+            cnt[lv]++;
+            if (c.chosenCost == null) missing++; else sum[lv] += c.chosenCost;
+        });
+        const colors = { 1: "#b91c1c", 2: "#c2410c", 3: "#a16207", 4: "#475569" };
+        let html = "";
+        [1, 2, 3, 4].forEach(lv => {
+            html += `<div class="kpi-card"><h3>${PLAN_LEVEL_NAMES[lv]}</h3><div class="value" style="color:${colors[lv]}; font-size:1.4rem;">${baht(sum[lv])}</div><div class="sub-value">${cnt[lv]} จุด</div></div>`;
+        });
+        html += `<div class="kpi-card"><h3>งบรวมของวิธีที่เลือก</h3><div class="value" style="color: var(--primary-color); font-size:1.4rem;">${baht(sum[1] + sum[2] + sum[3] + sum[4])}</div><div class="sub-value">${missing ? `ยังไม่รวม ${missing} จุดที่ยังไม่ได้กรอกขนาดห้องหรือประเมินราคาไม่ได้` : "รวมครบทุกจุด"}</div></div>`;
+        document.getElementById("plan-summary").innerHTML = html;
+    }
+
+    function renderPlan() {
+        const order = planRooms.map((r, i) => i).sort((a, b) =>
+            roomLevel(planRooms[a]) - roomLevel(planRooms[b]) || planRooms[a].ruleIndex - planRooms[b].ruleIndex || a - b);
+        let html = "", lastLevel = 0, rank = 0;
+        order.forEach(i => {
+            const r = planRooms[i], d = r.saved, lv = roomLevel(r), rec = recommendMethod(r);
+            if (lv !== lastLevel) {
+                html += `<div class="level-header level-${lv}"><span>${PLAN_LEVEL_NAMES[lv]}</span><span>${planRooms.filter(x => roomLevel(x) === lv).length} จุด</span></div>`;
+                lastLevel = lv;
+            }
+            rank++;
+            const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)"></label>`;
+            html += `<div class="plan-card">
+                <div class="plan-card-head">
+                    <div><h4>${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
+                    <div><select onchange="planInput(${i}, 'level', this.value); renderPlan();">
+                        ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === lv ? "selected" : ""}>${PLAN_LEVEL_NAMES[n]}</option>`).join("")}
+                    </select></div>
+                </div>
+                <div class="dim-grid">
+                    <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)"></label>
+                    ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("people", "จำนวนคนในห้อง")}
+                    <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
+                        <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
+                        ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
+                    </select></label>
+                </div>
+                <div class="plan-result" id="plan-result-${i}"></div>
+                <div style="margin-top: 12px;"><button class="plan-btn" onclick="savePlanRoom(${i}, this)">บันทึกห้องนี้</button><span class="save-msg" id="plan-msg-${i}"></span></div>
+            </div>`;
+        });
+        document.getElementById("plan-list").innerHTML = html;
+        planRooms.forEach((r, i) => renderPlanResult(i));
+        renderPlanSummary();
+    }
+
+    function planInput(i, key, value) {
+        planRooms[i].saved[key] = value;
+        renderPlanResult(i);
+        renderPlanSummary();
+        const msg = document.getElementById("plan-msg-" + i);
+        if (msg) msg.innerText = "มีการแก้ไขที่ยังไม่ได้บันทึก";
+    }
+
+    function renderPlanSettings() {
+        document.getElementById("plan-settings-grid").innerHTML = PLAN_SETTING_FIELDS.map(f =>
+            `<label>${f[1]}<input type="number" min="0" step="any" value="${esc(planSettings[f[0]])}" oninput="planSettingInput('${f[0]}', this.value)"></label>`).join("");
+    }
+    function planSettingInput(key, value) {
+        const n = num(value);
+        if (n == null) return;
+        planSettings[key] = n;
+        planRooms.forEach((r, i) => renderPlanResult(i));
+        renderPlanSummary();
+    }
+
+    function localGet() { try { return JSON.parse(localStorage.getItem("cleanAirPlan") || "{}"); } catch (e) { return {}; } }
+    function localSet(obj) { try { localStorage.setItem("cleanAirPlan", JSON.stringify(obj)); return true; } catch (e) { return false; } }
+
+    async function planPost(payload) {
+        payload.passcode = document.getElementById("plan-passcode").value;
+        const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || "บันทึกไม่สำเร็จ");
+    }
+
+    async function savePlanRoom(i, btn) {
+        const r = planRooms[i], d = r.saved, msg = document.getElementById("plan-msg-" + i);
+        const row = { key: r.key, building: r.building, name: r.name, level: roomLevel(r), reason: roomReason(r), method: d.method || "", w: d.w || "", l: d.l || "", h: d.h || "", area: d.area || "", people: d.people || "" };
+        btn.disabled = true; msg.innerText = "กำลังบันทึก...";
+        try {
+            if (planOnline) {
+                await planPost({ action: "saveRoom", row });
+                msg.innerText = "บันทึกลง Google Sheets แล้ว";
+            } else {
+                const store = localGet(); store.rows = store.rows || {}; store.rows[r.key] = row;
+                msg.innerText = localSet(store) ? "บันทึกในเบราว์เซอร์เครื่องนี้แล้ว (ยังไม่ได้เชื่อม Google Sheets)" : "บันทึกไม่สำเร็จ";
+            }
+        } catch (e) { msg.innerText = "บันทึกไม่สำเร็จ: " + e.message; }
+        btn.disabled = false;
+    }
+
+    async function savePlanSettings(btn) {
+        const msg = document.getElementById("plan-settings-msg");
+        btn.disabled = true; msg.innerText = "กำลังบันทึก...";
+        try {
+            if (planOnline) {
+                await planPost({ action: "saveSettings", settings: planSettings });
+                msg.innerText = "บันทึกลง Google Sheets แล้ว";
+            } else {
+                const store = localGet(); store.settings = planSettings;
+                msg.innerText = localSet(store) ? "บันทึกในเบราว์เซอร์เครื่องนี้แล้ว" : "บันทึกไม่สำเร็จ";
+            }
+        } catch (e) { msg.innerText = "บันทึกไม่สำเร็จ: " + e.message; }
+        btn.disabled = false;
+    }
+
+    async function initPlan(data) {
+        planRooms = data.map(buildPlanRoom);
+        planSettings = {};
+        PLAN_SETTING_FIELDS.forEach(f => planSettings[f[0]] = f[2]);
+
+        const banner = document.getElementById("plan-banner");
+        let stored = { rows: {}, settings: {} };
+        if (APPS_SCRIPT_URL) {
+            try {
+                const json = await (await fetch(APPS_SCRIPT_URL)).json();
+                if (!json.ok) throw new Error(json.error);
+                stored = json; planOnline = true;
+                banner.className = "plan-banner ok";
+                banner.innerText = "เชื่อมต่อ Google Sheets แล้ว ข้อมูลที่บันทึกจะอยู่ในแท็บ \"แผนปรับปรุง\" ของไฟล์ต้นฉบับ";
+            } catch (e) {
+                stored = localGet();
+                banner.innerText = "เชื่อมต่อ Google Sheets ไม่สำเร็จ ข้อมูลที่บันทึกจะอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น";
+            }
+        } else {
+            stored = localGet();
+            banner.innerText = "ยังไม่ได้เชื่อมต่อ Google Sheets ข้อมูลที่บันทึกจะอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น";
+        }
+
+        const rows = stored.rows || {};
+        planRooms.forEach(r => { if (rows[r.key]) r.saved = Object.assign({}, rows[r.key]); });
+        Object.keys(stored.settings || {}).forEach(k => { const n = num(stored.settings[k]); if (n != null && k in planSettings) planSettings[k] = n; });
+
+        renderPlanSettings();
+        renderPlan();
     }
 
     window.onload = function() {
