@@ -806,26 +806,53 @@
                 lastLevel = lv;
             }
             rank++;
-            const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)" ${isEditMode ? "" : "disabled"}></label>`;
-            html += `<details class="plan-card">
-                <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
-                    <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
-                    <div onclick="event.stopPropagation();"><select onchange="planInput(${i}, 'level', this.value); renderPlan();" ${isEditMode ? "" : "disabled"}>
-                        ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === lv ? "selected" : ""}>${PLAN_LEVEL_NAMES[n]}</option>`).join("")}
-                    </select></div>
-                </summary>
-                <div class="dim-grid" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)" ${isEditMode ? "" : "disabled"}></label>
-                    ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("vol_m3", "หรือ ลบ.ม.")}${f("people", "จำนวนคนในห้อง")}
-                    ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
-                    <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)" ${isEditMode ? "" : "disabled"}>
-                        <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
-                        ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
-                    </select></label>
-                </div>
-                <div class="plan-result" id="plan-result-${i}"></div>
-                <div style="margin-top: 12px; display: ${isEditMode ? 'block' : 'none'};"><button class="plan-btn" onclick="savePlanRoom(${i}, this)">บันทึกห้องนี้</button><span class="save-msg" id="plan-msg-${i}"></span></div>
-            </details>`;
+            if (!isEditMode) {
+                // --- โหมดแสดงผล (Read-only): สรุปข้อมูลเป็นข้อความ ไม่ให้มีช่องกรอก ---
+                let dims = [];
+                if (d.w && d.l) dims.push(`กว้าง ${d.w} × ยาว ${d.l} ม.`);
+                if (d.h) dims.push(`สูง ${d.h} ม.`);
+                if (d.area) dims.push(`พื้นที่ ${d.area} ตร.ม.`);
+                if (d.vol_m3) dims.push(`ปริมาตร ${d.vol_m3} ลบ.ม.`);
+                if (d.people) dims.push(`คนในห้อง ${d.people} คน`);
+                if (d.existingCadr) dims.push(`CADR เดิม ${d.existingCadr}`);
+                let dimText = dims.length > 0 ? dims.join(", ") : "ยังไม่ได้ระบุขนาดห้อง (ระบบจะคำนวณจากค่าสมมติ)";
+                let methodText = d.method ? PLAN_METHOD_NAMES[d.method] : `ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})`;
+
+                html += `<details class="plan-card">
+                    <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
+                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
+                        <div><span style="font-size: 0.9rem; font-weight: 600; color: var(--secondary-color); padding: 4px 10px; background: var(--info-bg); border: 1px solid var(--border-color); border-radius: 4px;">${PLAN_LEVEL_NAMES[lv]}</span></div>
+                    </summary>
+                    <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; font-size: 0.85rem; color: var(--secondary-color); line-height: 1.8;">
+                        <div style="color: #334155;"><strong>เหตุผลความเร่งด่วน:</strong> ${esc(roomReason(r))}</div>
+                        <div><strong>ข้อมูลห้องที่บันทึกไว้:</strong> ${esc(dimText)}</div>
+                        <div style="margin-bottom: 10px;"><strong>วิธีแก้ปัญหา:</strong> <span style="color: var(--primary-color); font-weight: 500;">${esc(methodText)}</span></div>
+                    </div>
+                    <div class="plan-result" id="plan-result-${i}"></div>
+                </details>`;
+            } else {
+                // --- โหมดแก้ไข (Edit): แสดงกล่อง Input เพื่อให้กรอกและบันทึกได้ ---
+                const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)"></label>`;
+                html += `<details class="plan-card">
+                    <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
+                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
+                        <div onclick="event.stopPropagation();"><select onchange="planInput(${i}, 'level', this.value); renderPlan();">
+                            ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === lv ? "selected" : ""}>${PLAN_LEVEL_NAMES[n]}</option>`).join("")}
+                        </select></div>
+                    </summary>
+                    <div class="dim-grid" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                        <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)"></label>
+                        ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("vol_m3", "หรือ ลบ.ม.")}${f("people", "จำนวนคนในห้อง")}
+                        ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
+                        <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
+                            <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
+                            ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
+                        </select></label>
+                    </div>
+                    <div class="plan-result" id="plan-result-${i}"></div>
+                    <div style="margin-top: 12px;"><button class="plan-btn" onclick="savePlanRoom(${i}, this)">บันทึกห้องนี้</button><span class="save-msg" id="plan-msg-${i}"></span></div>
+                </details>`;
+            }
         });
         document.getElementById("plan-list").innerHTML = html;
         planRooms.forEach((r, i) => renderPlanResult(i));
