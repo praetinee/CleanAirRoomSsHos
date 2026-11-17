@@ -791,7 +791,7 @@
         [1, 2, 3, 4].forEach(lv => {
             html += `<div class="kpi-card"><h3>${PLAN_LEVEL_NAMES[lv]}</h3><div class="value" style="color:${colors[lv]}; font-size:1.4rem;">${baht(sum[lv])}</div><div class="sub-value">${cnt[lv]} จุด</div></div>`;
         });
-        html += `<div class="kpi-card"><h3>งบรวมของวิธีที่เลือก</h3><div class="value" style="color: var(--primary-color); font-size:1.4rem;">${baht(sum[1] + sum[2] + sum[3] + sum[4])}</div><div class="sub-value">${missing ? `ยังไม่รวม ${missing} จุดที่ยังไม่ได้กรอกขนาดห้องหรือประเมินราคาไม่ได้` : "รวมครบทุกจุด"}</div></div>`;
+        html += `<div class="kpi-card"><h3>งบรวมของวิธีที่เลือก <span style="font-size: 0.8rem; font-weight: 400; color: var(--warning-color);">(ยังไม่ใช่ราคาสุทธิ)</span></h3><div class="value" style="color: var(--primary-color); font-size:1.4rem;">${baht(sum[1] + sum[2] + sum[3] + sum[4])}</div><div class="sub-value">${missing ? `ยังไม่รวม ${missing} จุดที่ยังไม่ได้ระบุขนาดห้องหรือประเมินราคาไม่ได้` : "คำนวณจากทุกจุดที่มีข้อมูลแล้ว"}</div></div>`;
         document.getElementById("plan-summary").innerHTML = html;
     }
 
@@ -816,7 +816,7 @@
                 if (d.people) dims.push(`คนในห้อง ${d.people} คน`);
                 if (d.existingCadr) dims.push(`CADR เดิม ${d.existingCadr}`);
                 let dimText = dims.length > 0 ? dims.join(", ") : "ยังไม่ได้ระบุขนาดห้อง (ระบบจะคำนวณจากค่าสมมติ)";
-                let methodText = d.method ? PLAN_METHOD_NAMES[d.method] : `ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})`;
+                let methodText = d.method ? PLAN_METHOD_NAMES[d.method] : `วิธีที่เหมาะสมที่สุด (${PLAN_METHOD_NAMES[rec]})`;
 
                 html += `<details class="plan-card">
                     <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
@@ -845,7 +845,7 @@
                         ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("vol_m3", "หรือ ลบ.ม.")}${f("people", "จำนวนคนในห้อง")}
                         ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
                         <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
-                            <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
+                            <option value="">วิธีที่เหมาะสมที่สุด (${PLAN_METHOD_NAMES[rec]})</option>
                             ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
                         </select></label>
                     </div>
