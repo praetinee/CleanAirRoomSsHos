@@ -815,12 +815,14 @@
                 if (d.vol_m3) dims.push(`ปริมาตร ${d.vol_m3} ลบ.ม.`);
                 if (d.people) dims.push(`คนในห้อง ${d.people} คน`);
                 if (d.existingCadr) dims.push(`CADR เดิม ${d.existingCadr}`);
-                let dimText = dims.length > 0 ? dims.join(", ") : "ยังไม่ได้ระบุขนาดห้อง (ระบบจะคำนวณจากค่าสมมติ)";
+                let dimText = dims.length > 0 ? dims.join(", ") : "(รอขนาดห้อง)";
                 let methodText = d.method ? PLAN_METHOD_NAMES[d.method] : `วิธีที่เหมาะสมที่สุด (${PLAN_METHOD_NAMES[rec]})`;
+                
+                let sizeBadge = dims.length > 0 ? "" : ' <span style="color: var(--danger-bg); font-size: 0.85rem; font-weight: normal;">(รอขนาดห้อง)</span>';
 
                 html += `<details class="plan-card">
                     <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
-                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
+                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}${sizeBadge}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
                         <div><span style="font-size: 0.9rem; font-weight: 600; color: var(--secondary-color); padding: 4px 10px; background: var(--info-bg); border: 1px solid var(--border-color); border-radius: 4px;">${PLAN_LEVEL_NAMES[lv]}</span></div>
                     </summary>
                     <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; font-size: 0.85rem; color: var(--secondary-color); line-height: 1.8;">
@@ -832,10 +834,12 @@
                 </details>`;
             } else {
                 // --- โหมดแก้ไข (Edit): แสดงกล่อง Input เพื่อให้กรอกและบันทึกได้ ---
+                const hasSize = d.area || d.vol_m3 || (d.w && d.l);
+                const sizeBadge = hasSize ? "" : ' <span style="color: var(--danger-bg); font-size: 0.85rem; font-weight: normal;">(รอขนาดห้อง)</span>';
                 const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)"></label>`;
                 html += `<details class="plan-card">
                     <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
-                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
+                        <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}${sizeBadge}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
                         <div onclick="event.stopPropagation();"><select onchange="planInput(${i}, 'level', this.value); renderPlan();">
                             ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === lv ? "selected" : ""}>${PLAN_LEVEL_NAMES[n]}</option>`).join("")}
                         </select></div>
