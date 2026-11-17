@@ -297,8 +297,12 @@
         <div class="kpi-grid" id="plan-summary"></div>
 
         <div class="plan-settings" style="display: flex; align-items: center; gap: 10px; padding: 10px 20px;">
-            <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary-color);">รหัส Passcode สำหรับบันทึก:</label>
-            <input type="password" id="plan-passcode" placeholder="••••••••" style="width: 150px; font-family: 'Chakra Petch', sans-serif;">
+            <button class="plan-btn" id="btn-toggle-edit" onclick="toggleEditMode()">แก้ไขข้อมูล</button>
+            <div id="passcode-container" style="display: none; align-items: center; gap: 10px;">
+                <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary-color);">รหัส Passcode:</label>
+                <input type="password" id="plan-passcode" placeholder="••••••••" style="width: 150px; font-family: 'Chakra Petch', sans-serif;">
+                <button class="plan-btn" onclick="confirmEditMode()">ตกลง</button>
+            </div>
         </div>
 
         <details class="plan-settings">
@@ -538,7 +542,26 @@
     }
 
     /* ===================== แผนปรับปรุงและงบ ===================== */
+    let isEditMode = false;
+    let currentPasscode = "";
 
+    function toggleEditMode() {
+        document.getElementById('btn-toggle-edit').style.display = 'none';
+        document.getElementById('passcode-container').style.display = 'flex';
+    }
+
+    function confirmEditMode() {
+        const pass = document.getElementById('plan-passcode').value.trim();
+        if (!pass) {
+            alert('กรุณากรอกรหัส Passcode');
+            return;
+        }
+        currentPasscode = pass;
+        isEditMode = true;
+        document.getElementById('passcode-container').innerHTML = `<span style="color: var(--success-color); font-weight: 600;">ปลดล็อกโหมดแก้ไขแล้ว</span>`;
+        renderPlanSettings();
+        renderPlan();
+    }
     // วาง URL ของ Google Apps Script Web App (ลงท้ายด้วย /exec) ที่นี่ เพื่อให้บันทึกลง Google Sheets ต้นฉบับได้
     // ถ้าเว้นว่าง ระบบจะบันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsNlYN0DNiGsg0ReY1-mDPlYdxv4M9VPsulZtGvOgmeFqFAlmwQJ46rKc38QGAUTGMGA/exec";
@@ -694,7 +717,7 @@
         if (r.pressure === "negative") pp.warn = "ห้ามทำก่อนปรึกษาทีมควบคุมการติดเชื้อ: ห้องนี้บันทึกเป็น negative pressure";
         else if (r.pressure === "positive") pp.hint = "ห้องนี้เป็น positive pressure อยู่แล้ว";
         else if (!r.hasAC) pp.hint = "อากาศที่เติมเข้าผ่านการกรองแต่ไม่ได้ทำให้เย็น ต้องตรวจว่าอุณหภูมิห้องไม่เกิน 30 °C";
-        else pp.hint = "ต้องอุดช่องรั่วและวัดผลจริงว่าแรงดันในห้องสูงกว่าด้านนอก";
+        else pp.warn = "ไม่แนะนำสำหรับห้องแอร์: การเติมอากาศจากภายนอกจะทำให้ห้องร้อนขึ้น แอร์ทำงานหนักและเปลืองไฟ (เหมาะกับห้องพัดลมมากกว่า)";
         out.methods.pp = pp;
 
         // แผ่นกรองติดแอร์
@@ -783,25 +806,25 @@
                 lastLevel = lv;
             }
             rank++;
-            const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)"></label>`;
+            const f = (k, label, cls) => `<label class="${cls || ""}">${label}<input type="number" min="0" step="any" value="${esc(d[k])}" oninput="planInput(${i}, '${k}', this.value)" ${isEditMode ? "" : "disabled"}></label>`;
             html += `<details class="plan-card">
                 <summary class="plan-card-head" style="cursor: pointer; list-style: none;">
                     <div><h4 style="color: var(--primary-color);">▼ ${rank}. ${esc(r.name)}</h4><span class="bld">${esc(r.building)}</span><div>${stateTags(r)}</div></div>
-                    <div onclick="event.stopPropagation();"><select onchange="planInput(${i}, 'level', this.value); renderPlan();">
+                    <div onclick="event.stopPropagation();"><select onchange="planInput(${i}, 'level', this.value); renderPlan();" ${isEditMode ? "" : "disabled"}>
                         ${[1, 2, 3, 4].map(n => `<option value="${n}" ${n === lv ? "selected" : ""}>${PLAN_LEVEL_NAMES[n]}</option>`).join("")}
                     </select></div>
                 </summary>
                 <div class="dim-grid" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)"></label>
+                    <label class="wide" style="grid-column: 1 / -1;">เหตุผลของลำดับความเร่งด่วน<input type="text" value="${esc(roomReason(r))}" oninput="planInput(${i}, 'reason', this.value)" ${isEditMode ? "" : "disabled"}></label>
                     ${f("w", "กว้าง (ม.)")}${f("l", "ยาว (ม.)")}${f("h", "สูง (ม.)")}${f("area", "หรือ ตร.ม.")}${f("vol_m3", "หรือ ลบ.ม.")}${f("people", "จำนวนคนในห้อง")}
                     ${f("existingCadr", r.purCount > 0 ? `★ CADR เครื่องเดิมรวม (${r.purCount} เครื่อง)` : "CADR เครื่องเดิมรวม")}
-                    <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)">
+                    <label class="wide">วิธีที่เลือก<select onchange="planInput(${i}, 'method', this.value)" ${isEditMode ? "" : "disabled"}>
                         <option value="">ตามที่ระบบแนะนำ (${PLAN_METHOD_NAMES[rec]})</option>
                         ${Object.keys(PLAN_METHOD_NAMES).map(m => `<option value="${m}" ${d.method === m ? "selected" : ""}>${PLAN_METHOD_NAMES[m]}</option>`).join("")}
                     </select></label>
                 </div>
                 <div class="plan-result" id="plan-result-${i}"></div>
-                <div style="margin-top: 12px;"><button class="plan-btn" onclick="savePlanRoom(${i}, this)">บันทึกห้องนี้</button><span class="save-msg" id="plan-msg-${i}"></span></div>
+                <div style="margin-top: 12px; display: ${isEditMode ? 'block' : 'none'};"><button class="plan-btn" onclick="savePlanRoom(${i}, this)">บันทึกห้องนี้</button><span class="save-msg" id="plan-msg-${i}"></span></div>
             </details>`;
         });
         document.getElementById("plan-list").innerHTML = html;
@@ -819,7 +842,10 @@
 
     function renderPlanSettings() {
         document.getElementById("plan-settings-grid").innerHTML = PLAN_SETTING_FIELDS.map(f =>
-            `<label>${f[1]}<input type="number" min="0" step="any" value="${esc(planSettings[f[0]])}" oninput="planSettingInput('${f[0]}', this.value)"></label>`).join("");
+            `<label>${f[1]}<input type="number" min="0" step="any" value="${esc(planSettings[f[0]])}" oninput="planSettingInput('${f[0]}', this.value)" ${isEditMode ? "" : "disabled"}></label>`).join("");
+        
+        const btnSaveSettings = document.querySelector('button[onclick="savePlanSettings(this)"]');
+        if (btnSaveSettings) btnSaveSettings.style.display = isEditMode ? "inline-block" : "none";
     }
     function planSettingInput(key, value) {
         const n = num(value);
@@ -833,19 +859,19 @@
     function localSet(obj) { try { localStorage.setItem("cleanAirPlan", JSON.stringify(obj)); return true; } catch (e) { return false; } }
 
     async function planPost(payload) {
-        let passInput = document.getElementById("plan-passcode");
-        // เช็คว่ากรอกรหัสผ่านหรือยัง ถ้ายังให้เด้งไปที่ช่องกรอกทันที
-        if (!passInput.value.trim()) {
-            passInput.focus();
-            throw new Error("กรุณากรอกรหัส Passcode ในช่องด้านบนก่อนกดบันทึก");
+        if (!isEditMode || !currentPasscode) {
+            throw new Error("กรุณากดปุ่มแก้ไขข้อมูลและใส่รหัสก่อน");
         }
-        payload.passcode = passInput.value.trim();
+        payload.passcode = currentPasscode;
         
         const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const json = await res.json();
         if (!json.ok) {
-            // ถ้ารหัสผิด ให้ล้างรหัสในกล่องทิ้งทันที
-            if (json.error && json.error.includes("รหัส")) passInput.value = ""; 
+            if (json.error && json.error.includes("รหัส")) {
+                isEditMode = false;
+                currentPasscode = "";
+                alert("รหัส Passcode ไม่ถูกต้อง กรุณารีเฟรชหน้าเว็บแล้วลองใหม่");
+            }
             throw new Error(json.error || "บันทึกไม่สำเร็จ");
         }
     }
